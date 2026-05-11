@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow"/>
+  <title>Admin — PC SOLUTIONS®</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body class="admin-body">
+
+<!-- LOGIN -->
+<div id="login-screen" class="admin-login">
+  <div class="login-card">
+    <div class="login-logo">PC <span>SOLUTIONS</span>® <sup style="font-size:.5em;color:#22c55e">ADMIN</sup></div>
+    <p class="login-sub">Panel de administración</p>
+    <div class="login-form">
+      <input type="text" id="login-user" placeholder="Usuario" autocomplete="username"/>
+      <input type="password" id="login-pass" placeholder="Contraseña" autocomplete="current-password"/>
+      <button class="login-btn" id="login-btn">Ingresar</button>
+      <p class="login-error" id="login-error" style="display:none"></p>
+    </div>
+    <p style="text-align:center;margin-top:1.5rem;font-size:.78rem;color:#4b5563;">
+      Usuario por defecto: <code style="color:#22c55e">admin</code> / <code style="color:#22c55e">pcsolutions2025</code><br/>
+      <span style="color:#f59e0b">⚠️ Cambia la contraseña después del primer ingreso</span>
+    </p>
+  </div>
+</div>
+
+<!-- PANEL PRINCIPAL -->
+<div id="admin-panel" class="admin-layout" style="display:none">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-sidebar-logo">PC <span>SOLUTIONS</span>® <sup style="font-size:.5em">ADMIN</sup></div>
+    <nav class="admin-nav">
+      <button class="admin-nav-item active" data-section="dashboard">📊 Dashboard</button>
+      <button class="admin-nav-item" data-section="productos">📦 Productos</button>
+      <button class="admin-nav-item" data-section="pedidos">🛒 Pedidos</button>
+      <button class="admin-nav-item" data-section="mensajes">✉️ Mensajes</button>
+      <button class="admin-nav-item" data-section="config">⚙️ Configuración</button>
+      <button class="admin-nav-item" data-section="password">🔑 Contraseña</button>
+    </nav>
+    <div class="admin-sidebar-footer">
+      <button class="admin-logout" id="admin-logout">↩ Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+
+    <!-- DASHBOARD -->
+    <section id="sec-dashboard">
+      <div class="admin-topbar">
+        <h1 class="admin-title">Dashboard</h1>
+        <button class="btn-admin-primary" onclick="loadStats()">↻ Actualizar</button>
+      </div>
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card accent"><div class="stat-card-icon">📦</div><div class="stat-card-val" id="st-productos">—</div><div class="stat-card-label">Productos activos</div></div>
+        <div class="stat-card"><div class="stat-card-icon">🛒</div><div class="stat-card-val" id="st-pedidos">—</div><div class="stat-card-label">Total pedidos</div></div>
+        <div class="stat-card"><div class="stat-card-icon">⏳</div><div class="stat-card-val" id="st-pendientes">—</div><div class="stat-card-label">Pedidos pendientes</div></div>
+        <div class="stat-card"><div class="stat-card-icon">✉️</div><div class="stat-card-val" id="st-mensajes">—</div><div class="stat-card-label">Mensajes sin leer</div></div>
+        <div class="stat-card accent"><div class="stat-card-icon">💰</div><div class="stat-card-val" id="st-ingresos">—</div><div class="stat-card-label">Ingresos totales</div></div>
+      </div>
+      <div style="background:#1a1a1a;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:2rem;margin-top:1rem">
+        <p style="color:#6b7280;font-size:.875rem;line-height:1.8">
+          👋 <strong style="color:#fff">Bienvenido al panel de PC SOLUTIONS®</strong><br/>
+          Desde aquí puedes gestionar productos, ver pedidos, leer mensajes del formulario y configurar la información del sitio.<br/><br/>
+          🔗 Ver tienda: <a href="/" target="_blank" style="color:#22c55e">pcsolutions.com.co</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <section id="sec-productos" style="display:none">
+      <div class="admin-topbar">
+        <h1 class="admin-title">Productos</h1>
+        <button class="btn-admin-primary" onclick="openProductModal()">+ Agregar producto</button>
+      </div>
+      <div class="admin-table-wrap">
+        <div class="admin-table-header">
+          <span class="admin-table-title">Catálogo de productos</span>
+          <span id="prod-count" class="admin-badge">0 productos</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="admin-table">
+            <thead><tr>
+              <th>Imagen</th><th>Nombre</th><th>Categoría</th>
+              <th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="productos-tbody"><tr><td colspan="7" style="text-align:center;color:#6b7280;padding:2rem">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PEDIDOS -->
+    <section id="sec-pedidos" style="display:none">
+      <div class="admin-topbar">
+        <h1 class="admin-title">Pedidos</h1>
+        <button class="btn-admin-primary" onclick="loadPedidos()">↻ Actualizar</button>
+      </div>
+      <div class="admin-table-wrap">
+        <div style="overflow-x:auto">
+          <table class="admin-table">
+            <thead><tr>
+              <th>#</th><th>Cliente</th><th>Teléfono</th>
+              <th>Total</th><th>Estado</th><th>Fecha</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="pedidos-tbody"><tr><td colspan="7" style="text-align:center;color:#6b7280;padding:2rem">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENSAJES -->
+    <section id="sec-mensajes" style="display:none">
+      <div class="admin-topbar">
+        <h1 class="admin-title">Mensajes</h1>
+        <button class="btn-admin-primary" onclick="loadMensajes()">↻ Actualizar</button>
+      </div>
+      <div class="msgs-grid" id="msgs-grid"><p style="color:#6b7280">Cargando...</p></div>
+    </section>
+
+    <!-- CONFIGURACIÓN -->
+    <section id="sec-config" style="display:none">
+      <div class="admin-topbar">
+        <h1 class="admin-title">Configuración del sitio</h1>
+      </div>
+      <div class="config-section">
+        <div class="config-section-title">📞 Información de contacto</div>
+        <div class="config-grid">
+          <div class="modal-form-group"><label>Teléfono</label><input type="text" id="cfg-telefono" placeholder="3176655518"/></div>
+          <div class="modal-form-group"><label>WhatsApp (con código país)</label><input type="text" id="cfg-whatsapp" placeholder="573176655518"/></div>
+          <div class="modal-form-group"><label>Email</label><input type="email" id="cfg-email" placeholder="info@pcsolutions.com.co"/></div>
+          <div class="modal-form-group"><label>Horario</label><input type="text" id="cfg-horario" placeholder="Lun-Vie 8am-6pm"/></div>
+          <div class="modal-form-group" style="grid-column:1/-1"><label>Dirección</label><input type="text" id="cfg-direccion" placeholder="Calle 18 # 26-28..."/></div>
+        </div>
+      </div>
+      <div class="config-section">
+        <div class="config-section-title">🔗 Redes sociales</div>
+        <div class="config-grid">
+          <div class="modal-form-group"><label>Instagram URL</label><input type="url" id="cfg-instagram" placeholder="https://instagram.com/..."/></div>
+          <div class="modal-form-group"><label>Facebook URL</label><input type="url" id="cfg-facebook" placeholder="https://facebook.com/..."/></div>
+        </div>
+      </div>
+      <button class="btn-admin-primary" id="btn-save-config">💾 Guardar configuración</button>
+      <p id="config-msg" style="margin-top:.75rem;color:#22c55e;display:none">✅ Configuración guardada</p>
+    </section>
+
+    <!-- CONTRASEÑA -->
+    <section id="sec-password" style="display:none">
+      <div class="admin-topbar"><h1 class="admin-title">Cambiar contraseña</h1></div>
+      <div style="background:#1a1a1a;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:2rem;max-width:420px">
+        <div class="modal-form-group" style="margin-bottom:1rem"><label>Contraseña actual</label><input type="password" id="pwd-actual"/></div>
+        <div class="modal-form-group" style="margin-bottom:1rem"><label>Nueva contraseña (mín. 8 caracteres)</label><input type="password" id="pwd-nueva"/></div>
+        <div class="modal-form-group" style="margin-bottom:1.5rem"><label>Confirmar nueva contraseña</label><input type="password" id="pwd-confirmar"/></div>
+        <button class="btn-admin-primary" id="btn-change-pwd">🔑 Cambiar contraseña</button>
+        <p id="pwd-msg" style="margin-top:.75rem;display:none"></p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL PRODUCTO -->
+<div id="product-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <h3 class="modal-title" id="modal-title">Agregar producto</h3>
+    <div class="modal-grid">
+      <div class="modal-form-group full"><label>Nombre del producto *</label><input type="text" id="pm-nombre" placeholder="Ej: Portátil Profesional 15&quot;"/></div>
+      <div class="modal-form-group"><label>Precio (COP) *</label><input type="number" id="pm-precio" placeholder="3200000"/></div>
+      <div class="modal-form-group"><label>Precio anterior (tachado)</label><input type="number" id="pm-precio-antes" placeholder="3800000"/></div>
+      <div class="modal-form-group"><label>Categoría *</label>
+        <select id="pm-categoria">
+          <option value="laptops">Portátiles</option>
+          <option value="desktop">Escritorio</option>
+          <option value="gaming">Gaming</option>
+          <option value="accesorios">Accesorios</option>
+        </select>
+      </div>
+      <div class="modal-form-group"><label>Stock</label><input type="number" id="pm-stock" placeholder="0"/></div>
+      <div class="modal-form-group full"><label>Especificaciones</label><input type="text" id="pm-specs" placeholder="Core i7 | 16GB RAM | 512GB SSD | Win 11"/></div>
+      <div class="modal-form-group full"><label>URL de imagen</label><input type="url" id="pm-imagen" placeholder="https://images.unsplash.com/..."/></div>
+      <div class="modal-form-group full"><label>Descripción</label><textarea id="pm-desc" rows="2" placeholder="Descripción breve del producto"></textarea></div>
+      <div class="modal-form-group"><label>Badge / etiqueta</label><input type="text" id="pm-badge" placeholder="Más vendido, Gaming, Premium..."/></div>
+      <div class="modal-form-group"><label>Estado</label>
+        <select id="pm-activo"><option value="1">Activo (visible)</option><option value="0">Inactivo (oculto)</option></select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeProductModal()">Cancelar</button>
+      <button class="btn-admin-primary" id="btn-save-product">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const API = window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : '/api';
+let token = localStorage.getItem('pcs_admin_token');
+let editingProductId = null;
+
+function formatCOP(n) { return '$' + Number(n).toLocaleString('es-CO'); }
+function fmtDate(s) { return s ? new Date(s).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—'; }
+
+/* ═══ AUTH ═══ */
+async function checkAuth() {
+  if (!token) { showLogin(); return; }
+  try {
+    const r = await fetch(API + '/admin/me', { headers: { Authorization: 'Bearer ' + token } });
+    if (r.ok) { showPanel(); } else { showLogin(); }
+  } catch { showLogin(); }
+}
+
+function showLogin() { document.getElementById('login-screen').style.display='flex'; document.getElementById('admin-panel').style.display='none'; }
+function showPanel() { document.getElementById('login-screen').style.display='none'; document.getElementById('admin-panel').style.display='flex'; loadStats(); }
+
+document.getElementById('login-btn').addEventListener('click', async () => {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if (!user || !pass) { errEl.textContent = 'Ingresa usuario y contraseña'; errEl.style.display='block'; return; }
+  try {
+    const r = await fetch(API + '/auth/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username: user, password: pass })
+    });
+    const data = await r.json();
+    if (!r.ok) { errEl.textContent = data.error || 'Error al ingresar'; errEl.style.display='block'; return; }
+    token = data.token;
+    localStorage.setItem('pcs_admin_token', token);
+    showPanel();
+  } catch { errEl.textContent = 'Error de conexión con el servidor'; errEl.style.display='block'; }
+});
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-btn').click(); });
+
+document.getElementById('admin-logout').addEventListener('click', () => {
+  localStorage.removeItem('pcs_admin_token'); token = null; showLogin();
+});
+
+/* ═══ NAVEGACIÓN ═══ */
+const sections = ['dashboard','productos','pedidos','mensajes','config','password'];
+document.querySelectorAll('.admin-nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sec = btn.dataset.section;
+    document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    sections.forEach(s => document.getElementById('sec-'+s).style.display = s===sec?'block':'none');
+    if (sec==='productos') loadProductos();
+    if (sec==='pedidos')   loadPedidos();
+    if (sec==='mensajes')  loadMensajes();
+    if (sec==='config')    loadConfig();
+    if (sec==='dashboard') loadStats();
+  });
+});
+
+function authHeaders() { return { 'Content-Type':'application/json', Authorization: 'Bearer ' + token }; }
+
+/* ═══ DASHBOARD ═══ */
+async function loadStats() {
+  try {
+    const r = await fetch(API + '/admin/stats', { headers: authHeaders() });
+    const s = await r.json();
+    document.getElementById('st-productos').textContent  = s.productos;
+    document.getElementById('st-pedidos').textContent    = s.pedidos;
+    document.getElementById('st-pendientes').textContent = s.pendientes;
+    document.getElementById('st-mensajes').textContent   = s.mensajes;
+    document.getElementById('st-ingresos').textContent   = formatCOP(s.ingresos);
+  } catch(e) { console.error(e); }
+}
+
+/* ═══ PRODUCTOS ═══ */
+async function loadProductos() {
+  try {
+    const r = await fetch(API + '/admin/productos', { headers: authHeaders() });
+    const productos = await r.json();
+    document.getElementById('prod-count').textContent = productos.length + ' productos';
+    document.getElementById('productos-tbody').innerHTML = productos.map(p => `
+      <tr>
+        <td><img src="${p.imagen_url||''}" alt="${p.nombre}" onerror="this.style.display='none'"/></td>
+        <td><strong style="color:#fff">${p.nombre}</strong><br/><span style="font-size:.75rem;color:#6b7280">${p.especificaciones||''}</span></td>
+        <td><span class="admin-badge">${p.categoria}</span></td>
+        <td style="color:#22c55e;font-weight:700">${formatCOP(p.precio)}</td>
+        <td>${p.stock||0}</td>
+        <td><span class="badge-estado ${p.activo?'badge-activo':'badge-inactivo'}">${p.activo?'Activo':'Inactivo'}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn-admin-sm btn-edit" onclick="openProductModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">✏️ Editar</button>
+          <button class="btn-admin-sm btn-delete" onclick="deleteProducto(${p.id})" style="margin-left:4px">🗑 Borrar</button>
+        </td>
+      </tr>
+    `).join('') || '<tr><td colspan="7" style="text-align:center;color:#6b7280;padding:2rem">No hay productos</td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+function openProductModal(p) {
+  editingProductId = p ? p.id : null;
+  document.getElementById('modal-title').textContent = p ? '✏️ Editar producto' : '+ Agregar producto';
+  document.getElementById('pm-nombre').value      = p?.nombre || '';
+  document.getElementById('pm-precio').value      = p?.precio || '';
+  document.getElementById('pm-precio-antes').value= p?.precio_antes || '';
+  document.getElementById('pm-categoria').value   = p?.categoria || 'laptops';
+  document.getElementById('pm-stock').value       = p?.stock || 0;
+  document.getElementById('pm-specs').value       = p?.especificaciones || '';
+  document.getElementById('pm-imagen').value      = p?.imagen_url || '';
+  document.getElementById('pm-desc').value        = p?.descripcion || '';
+  document.getElementById('pm-badge').value       = p?.badge || '';
+  document.getElementById('pm-activo').value      = p ? String(p.activo) : '1';
+  document.getElementById('product-modal').style.display = 'flex';
+}
+function closeProductModal() { document.getElementById('product-modal').style.display='none'; editingProductId=null; }
+
+document.getElementById('btn-save-product').addEventListener('click', async () => {
+  const body = {
+    nombre:           document.getElementById('pm-nombre').value.trim(),
+    precio:           document.getElementById('pm-precio').value,
+    precio_antes:     document.getElementById('pm-precio-antes').value,
+    categoria:        document.getElementById('pm-categoria').value,
+    stock:            document.getElementById('pm-stock').value,
+    especificaciones: document.getElementById('pm-specs').value.trim(),
+    imagen_url:       document.getElementById('pm-imagen').value.trim(),
+    descripcion:      document.getElementById('pm-desc').value.trim(),
+    badge:            document.getElementById('pm-badge').value.trim(),
+    activo:           document.getElementById('pm-activo').value,
+  };
+  if (!body.nombre || !body.precio) { alert('Nombre y precio son obligatorios'); return; }
+  const url    = editingProductId ? API+'/admin/productos/'+editingProductId : API+'/admin/productos';
+  const method = editingProductId ? 'PUT' : 'POST';
+  try {
+    const r = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+    if (!r.ok) throw new Error((await r.json()).error);
+    closeProductModal(); loadProductos(); loadStats();
+  } catch(e) { alert('Error: ' + e.message); }
+});
+
+async function deleteProducto(id) {
+  if (!confirm('¿Eliminar este producto? Esta acción no se puede deshacer.')) return;
+  await fetch(API+'/admin/productos/'+id, { method:'DELETE', headers: authHeaders() });
+  loadProductos(); loadStats();
+}
+
+/* ═══ PEDIDOS ═══ */
+const ESTADOS = ['pendiente','confirmado','enviado','cancelado'];
+async function loadPedidos() {
+  try {
+    const r = await fetch(API + '/admin/pedidos', { headers: authHeaders() });
+    const pedidos = await r.json();
+    document.getElementById('pedidos-tbody').innerHTML = pedidos.map(p => {
+      let items = [];
+      try { items = JSON.parse(p.items); } catch {}
+      return `<tr>
+        <td style="color:#22c55e;font-weight:700">#${p.id}</td>
+        <td><strong style="color:#fff">${p.cliente_nombre}</strong><br/><span style="font-size:.75rem;color:#6b7280">${p.cliente_email||''}</span></td>
+        <td>${p.cliente_tel||'—'}</td>
+        <td style="color:#22c55e;font-weight:700">${formatCOP(p.total)}</td>
+        <td><select class="btn-admin-sm" onchange="updatePedidoEstado(${p.id},this.value)" style="background:#111;color:#fff;border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:4px 8px;">
+          ${ESTADOS.map(e=>`<option value="${e}" ${e===p.estado?'selected':''}>${e}</option>`).join('')}
+        </select></td>
+        <td style="font-size:.75rem;color:#6b7280">${fmtDate(p.created_at)}</td>
+        <td><button class="btn-admin-sm btn-edit" onclick="verDetallePedido(${JSON.stringify(p).replace(/"/g,'&quot;')})">👁 Ver</button></td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="7" style="text-align:center;color:#6b7280;padding:2rem">No hay pedidos aún</td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+async function updatePedidoEstado(id, estado) {
+  await fetch(API+'/admin/pedidos/'+id+'/estado', { method:'PUT', headers: authHeaders(), body: JSON.stringify({estado}) });
+  loadStats();
+}
+
+function verDetallePedido(p) {
+  let items = [];
+  try { items = JSON.parse(p.items); } catch {}
+  const lineas = items.map(i=>`• ${i.nombre} x${i.qty} = ${formatCOP(i.precio*i.qty)}`).join('\n');
+  alert(`PEDIDO #${p.id}\n\nCliente: ${p.cliente_nombre}\nTel: ${p.cliente_tel||'—'}\nEmail: ${p.cliente_email||'—'}\n\nProductos:\n${lineas}\n\nTotal: ${formatCOP(p.total)}\n\nNotas: ${p.notas||'Ninguna'}\nFecha: ${fmtDate(p.created_at)}`);
+}
+
+/* ═══ MENSAJES ═══ */
+async function loadMensajes() {
+  try {
+    const r = await fetch(API + '/admin/mensajes', { headers: authHeaders() });
+    const msgs = await r.json();
+    const grid = document.getElementById('msgs-grid');
+    if (!msgs.length) { grid.innerHTML = '<p style="color:#6b7280">No hay mensajes aún</p>'; return; }
+    grid.innerHTML = msgs.map(m => `
+      <div class="msg-card ${!m.leido?'unread':''}">
+        <div class="msg-avatar">${(m.nombre||'?')[0].toUpperCase()}</div>
+        <div class="msg-content">
+          <div class="msg-name">${m.nombre||'Anónimo'} ${!m.leido?'<span style="color:#22c55e;font-size:.72rem">● NUEVO</span>':''}</div>
+          <div class="msg-meta">${m.email||''} ${m.telefono?'· '+m.telefono:''} · ${m.servicio||''} · ${fmtDate(m.created_at)}</div>
+          <div class="msg-text">${m.mensaje||''}</div>
+          ${!m.leido?`<button class="btn-admin-sm btn-edit" style="margin-top:.5rem" onclick="marcarLeido(${m.id},this)">✓ Marcar como leído</button>`:''}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function marcarLeido(id, btn) {
+  await fetch(API+'/admin/mensajes/'+id+'/leido', { method:'PUT', headers: authHeaders() });
+  btn.closest('.msg-card').classList.remove('unread');
+  btn.remove(); loadStats();
+}
+
+/* ═══ CONFIGURACIÓN ═══ */
+async function loadConfig() {
+  try {
+    const r = await fetch(API + '/config');
+    const cfg = await r.json();
+    document.getElementById('cfg-telefono').value  = cfg.telefono||'';
+    document.getElementById('cfg-whatsapp').value  = cfg.whatsapp||'';
+    document.getElementById('cfg-email').value     = cfg.email||'';
+    document.getElementById('cfg-horario').value   = cfg.horario||'';
+    document.getElementById('cfg-direccion').value = cfg.direccion||'';
+    document.getElementById('cfg-instagram').value = cfg.instagram||'';
+    document.getElementById('cfg-facebook').value  = cfg.facebook||'';
+  } catch(e) { console.error(e); }
+}
+
+document.getElementById('btn-save-config').addEventListener('click', async () => {
+  const body = {
+    telefono:  document.getElementById('cfg-telefono').value.trim(),
+    whatsapp:  document.getElementById('cfg-whatsapp').value.trim(),
+    email:     document.getElementById('cfg-email').value.trim(),
+    horario:   document.getElementById('cfg-horario').value.trim(),
+    direccion: document.getElementById('cfg-direccion').value.trim(),
+    instagram: document.getElementById('cfg-instagram').value.trim(),
+    facebook:  document.getElementById('cfg-facebook').value.trim(),
+  };
+  try {
+    const r = await fetch(API+'/admin/config', { method:'PUT', headers: authHeaders(), body: JSON.stringify(body) });
+    if (!r.ok) throw new Error('Error al guardar');
+    const msg = document.getElementById('config-msg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display='none', 3000);
+  } catch(e) { alert('Error: ' + e.message); }
+});
+
+/* ═══ CONTRASEÑA ═══ */
+document.getElementById('btn-change-pwd').addEventListener('click', async () => {
+  const actual    = document.getElementById('pwd-actual').value;
+  const nueva     = document.getElementById('pwd-nueva').value;
+  const confirmar = document.getElementById('pwd-confirmar').value;
+  const msgEl = document.getElementById('pwd-msg');
+  msgEl.style.display = 'none';
+  if (!actual||!nueva) { msgEl.textContent='Completa todos los campos'; msgEl.style.color='#f87171'; msgEl.style.display='block'; return; }
+  if (nueva !== confirmar) { msgEl.textContent='Las contraseñas no coinciden'; msgEl.style.color='#f87171'; msgEl.style.display='block'; return; }
+  if (nueva.length < 8) { msgEl.textContent='La contraseña debe tener al menos 8 caracteres'; msgEl.style.color='#f87171'; msgEl.style.display='block'; return; }
+  try {
+    const r = await fetch(API+'/admin/password', { method:'PUT', headers: authHeaders(), body: JSON.stringify({actual,nueva}) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error);
+    msgEl.textContent = '✅ Contraseña cambiada exitosamente'; msgEl.style.color='#22c55e'; msgEl.style.display='block';
+    document.getElementById('pwd-actual').value=''; document.getElementById('pwd-nueva').value=''; document.getElementById('pwd-confirmar').value='';
+  } catch(e) { msgEl.textContent='❌ '+e.message; msgEl.style.color='#f87171'; msgEl.style.display='block'; }
+});
+
+/* ═══ INIT ═══ */
+checkAuth();
+</script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ═══ SEGURIDAD: Meta CSP (respaldo si los headers del servidor fallan) ═══ -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline';
+                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                 font-src 'self' https://fonts.gstatic.com;
+                 img-src 'self' data: https://images.unsplash.com blob:;
+                 connect-src 'self' https://wa.me http://localhost:3001 https://*.railway.app https://*.render.com;
+                 frame-src 'none';
+                 object-src 'none';
+                 base-uri 'self';
+                 form-action 'self' https://wa.me;" />
+
+  <!-- Evita que navegadores antiguos ejecuten modos de compatibilidad inseguros -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- Anti-clickjacking via meta (respaldo) -->
+  <meta http-equiv="X-Frame-Options" content="deny" />
+
+  <!-- Evita sniffing de tipo MIME -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+
+  <!-- Referrer policy: no filtrar información al salir del sitio -->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+  <!-- Deshabilitar detección automática de teléfonos (evita XSS) -->
+  <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+
+  <!-- Robots: indexar pero no cachear contenido sensible -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+
+  <!-- SEO -->
+  <meta name="description" content="PC SOLUTIONS® — Tecnología premium, computadores, portátiles y soporte técnico profesional en Colombia." />
+  <meta name="keywords" content="computadores, portátiles, pc, laptops, soporte técnico, tecnología, Colombia" />
+  <meta property="og:title" content="PC SOLUTIONS® — Tecnología Premium" />
+  <meta property="og:description" content="Computadores, portátiles y soporte técnico profesional." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pcsolutions.com.co" />
+
+  <title>PC SOLUTIONS® — Tecnología Premium</title>
+
+  <!-- Fuentes con crossorigin para protección CORS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ============ NAVBAR ============ -->
+  <header id="navbar">
+    <div class="container nav-inner">
+      <a href="#inicio" class="logo">
+        PC <span class="accent">SOLUTIONS</span><sup>®</sup>
+      </a>
+      <nav id="nav-links">
+        <a href="#inicio">Inicio</a>
+        <a href="#productos">Productos</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#testimonios">Testimonios</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <a href="#contacto" class="btn-nav">Cotizar ahora</a>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#inicio" class="mob-link">Inicio</a>
+      <a href="#productos" class="mob-link">Productos</a>
+      <a href="#servicios" class="mob-link">Servicios</a>
+      <a href="#testimonios" class="mob-link">Testimonios</a>
+      <a href="#contacto" class="mob-link">Contacto</a>
+      <a href="#contacto" class="btn-nav mob-cta">Cotizar ahora</a>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section id="inicio" class="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="container hero-content">
+      <div class="hero-badge">🚀 Envíos a todo Colombia</div>
+      <h1 class="hero-title">
+        TECNOLOGÍA<br />
+        <span class="accent">PREMIUM</span>
+      </h1>
+      <p class="hero-sub">
+        Computadores, portátiles y soporte técnico profesional.<br />
+        Equipos de alto rendimiento para trabajo, estudio y gaming.
+      </p>
+      <div class="hero-actions">
+        <a href="#productos" class="btn-primary">Ver productos</a>
+        <a href="#contacto" class="btn-outline">Hablar con un experto</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Clientes felices</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">5 años</span><span class="stat-label">De experiencia</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num">24/7</span><span class="stat-label">Soporte técnico</span></div>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ============ MARCAS ============ -->
+  <section class="brands">
+    <div class="container">
+      <p class="brands-label">Trabajamos con las mejores marcas</p>
+      <div class="brands-grid">
+        <div class="brand-item">DELL</div>
+        <div class="brand-item">HP</div>
+        <div class="brand-item">LENOVO</div>
+        <div class="brand-item">ASUS</div>
+        <div class="brand-item">ACER</div>
+        <div class="brand-item">APPLE</div>
+        <div class="brand-item">MSI</div>
+        <div class="brand-item">SAMSUNG</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRODUCTOS ============ -->
+  <section id="productos" class="products">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Catálogo</p>
+        <h2 class="section-title">Nuestros Productos</h2>
+        <p class="section-sub">Equipos seleccionados con la mejor relación calidad-precio</p>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="filter-tabs" id="filter-tabs">
+        <button class="filter-btn active" data-filter="todos">Todos</button>
+        <button class="filter-btn" data-filter="laptops">Portátiles</button>
+        <button class="filter-btn" data-filter="desktop">Computadores</button>
+        <button class="filter-btn" data-filter="gaming">Gaming</button>
+        <button class="filter-btn" data-filter="accesorios">Accesorios</button>
+      </div>
+
+      <!-- Products grid — cargado dinámicamente desde la API -->
+      <div class="products-grid" id="products-grid">
+        <!-- Los productos se cargan desde la API -->
+        <div class="loading-products">
+          <div class="loading-spinner"></div>
+          <p>Cargando productos...</p>
+        </div>
+      </div><!-- /products-grid -->
+
+      <div class="products-cta">
+        <a href="#contacto" class="btn-primary">Ver catálogo completo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BANNER CTA ============ -->
+  <section class="cta-banner">
+    <div class="container cta-inner">
+      <div>
+        <h2>¿Necesitas asesoría personalizada?</h2>
+        <p>Nuestros expertos te ayudan a elegir el equipo ideal para tus necesidades.</p>
+      </div>
+      <a href="https://wa.me/573176655518?text=Hola%20PC%20Solutions%2C%20quiero%20asesoría" target="_blank" class="btn-whatsapp">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        Escribir por WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ SERVICIOS ============ -->
+  <section id="servicios" class="services">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Lo que ofrecemos</p>
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <p class="section-sub">Soluciones integrales para empresas y particulares</p>
+      </div>
+      <div class="services-grid">
+
+        <div class="service-card">
+          <div class="service-icon">🔧</div>
+          <h3>Soporte Técnico</h3>
+          <p>Diagnóstico y reparación de equipos. Mantenimiento preventivo y correctivo. Atención en sitio o en nuestro taller.</p>
+          <a href="#contacto" class="service-link">Solicitar →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">💻</div>
+          <h3>Venta de Equipos</h3>
+          <p>Computadores, portátiles y accesorios de las mejores marcas. Garantía oficial y asesoría especializada sin costo.</p>
+          <a href="#productos" class="service-link">Ver equipos →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">⚙️</div>
+          <h3>Ensamble a la Medida</h3>
+          <p>Armamos el PC perfecto según tu presupuesto y necesidades. Gaming, diseño, trabajo remoto o estudio.</p>
+          <a href="#contacto" class="service-link">Cotizar →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">☁️</div>
+          <h3>Configuración y Redes</h3>
+          <p>Instalación de redes LAN/WiFi, configuración de routers, VPN y servidores para hogar y empresa.</p>
+          <a href="#contacto" class="service-link">Solicitar →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">🛡️</div>
+          <h3>Seguridad Informática</h3>
+          <p>Antivirus, backups, recuperación de datos y protección contra ransomware. Tu información siempre segura.</p>
+          <a href="#contacto" class="service-link">Solicitar →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">📦</div>
+          <h3>Importación de Partes</h3>
+          <p>Conseguimos componentes específicos que no consigues en el mercado local. SSDs, GPUs, memorias y más.</p>
+          <a href="#contacto" class="service-link">Consultar →</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIOS ============ -->
+  <section id="testimonios" class="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Lo que dicen nuestros clientes</p>
+        <h2 class="section-title">Testimonios</h2>
+      </div>
+      <div class="testimonials-grid">
+
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">"Excelente servicio. Me asesoraron perfectamente para elegir el portátil ideal para diseño gráfico. Entrega rápida y precio justo."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">CM</div>
+            <div>
+              <p class="author-name">Carlos Martínez</p>
+              <p class="author-role">Diseñador gráfico</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">"Me ensamblarón el PC gamer de mis sueños. Relación calidad-precio increíble. El equipo corre todos los juegos sin problema."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#1a1a2e; color:#22c55e;">AG</div>
+            <div>
+              <p class="author-name">Andrés Gómez</p>
+              <p class="author-role">Estudiante / Gamer</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">"Repararon mi computador en tiempo récord. Pensé que estaba perdido todo, pero recuperaron mis datos. 100% recomendados."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#0ea5e9; color:#fff;">LP</div>
+            <div>
+              <p class="author-name">Laura Pérez</p>
+              <p class="author-role">Contadora</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACTO ============ -->
+  <section id="contacto" class="contact">
+    <div class="container contact-grid">
+
+      <div class="contact-info">
+        <p class="section-tag">Hablemos</p>
+        <h2 class="section-title">Contáctanos</h2>
+        <p class="section-sub">Estamos listos para ayudarte. Respuesta en menos de 1 hora en horario laboral.</p>
+
+        <div class="contact-items">
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <p class="ci-label">Dirección</p>
+              <p class="ci-value">Calle 18 # 26-28 Local 503, San Francisco<br/>Bucaramanga, Santander, Colombia</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <p class="ci-label">Teléfono / WhatsApp</p>
+              <p class="ci-value">+57 317 665 5518</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">✉️</div>
+            <div>
+              <p class="ci-label">Correo</p>
+              <p class="ci-value">info@pcsolutions.com.co</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🕐</div>
+            <div>
+              <p class="ci-label">Horario de atención</p>
+              <p class="ci-value">Lun–Vie: 8:00am – 6:00pm<br/>Sáb: 9:00am – 2:00pm</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="social-links">
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://wa.me/573176655518" target="_blank" class="social-btn" aria-label="WhatsApp">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Contact form -->
+      <div class="contact-form-wrap">
+        <form id="contact-form" class="contact-form" novalidate>
+          <h3>Envíanos un mensaje</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre">Nombre completo *</label>
+              <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Correo electrónico *</label>
+              <input type="email" id="email" name="email" placeholder="tu@correo.com" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">Teléfono / WhatsApp</label>
+            <input type="tel" id="telefono" name="telefono" placeholder="+57 300 000 0000" />
+          </div>
+
+          <div class="form-group">
+            <label for="servicio">¿Qué necesitas?</label>
+            <select id="servicio" name="servicio">
+              <option value="">Selecciona una opción</option>
+              <option value="compra">Comprar un equipo</option>
+              <option value="soporte">Soporte técnico</option>
+              <option value="ensamble">Ensamble personalizado</option>
+              <option value="red">Redes y configuración</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="mensaje">Mensaje *</label>
+            <textarea id="mensaje" name="mensaje" rows="4" placeholder="Cuéntanos qué necesitas..." required maxlength="2000"></textarea>
+          </div>
+
+          <!-- HONEYPOT: invisible para humanos, los bots lo rellenan -->
+          <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
+            <label for="hp-website">No completar este campo</label>
+            <input type="text" id="hp-website" name="hp_website" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <!-- Timestamp anti-spam: detecta envios automatizados muy rapidos -->
+          <input type="hidden" id="form-timestamp" name="_ts" value="" />
+
+          <button type="submit" class="btn-submit" id="submit-btn">
+            <span id="btn-text">Enviar mensaje</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+
+          <div id="form-success" class="form-success" style="display:none;">
+            ✅ ¡Mensaje enviado! Te contactaremos pronto.
+          </div>
+          <div id="form-error" class="form-error" style="display:none;">
+            ❌ Por favor completa todos los campos requeridos.
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="#inicio" class="logo">PC <span class="accent">SOLUTIONS</span><sup>®</sup></a>
+        <p>Tecnología premium y soporte técnico profesional en Colombia. Tu aliado tecnológico de confianza.</p>
+        <div class="social-links" style="margin-top:1rem;">
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <h4>Productos</h4>
+        <ul>
+          <li><a href="#productos">Portátiles</a></li>
+          <li><a href="#productos">Computadores</a></li>
+          <li><a href="#productos">Gaming</a></li>
+          <li><a href="#productos">Accesorios</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h4>Servicios</h4>
+        <ul>
+          <li><a href="#servicios">Soporte técnico</a></li>
+          <li><a href="#servicios">Ensamble a la medida</a></li>
+          <li><a href="#servicios">Redes y configuración</a></li>
+          <li><a href="#servicios">Seguridad informática</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="tel:+573176655518">+57 317 665 5518</a></li>
+          <li><a href="mailto:info@pcsolutions.com.co">info@pcsolutions.com.co</a></li>
+          <li><span>Bucaramanga, Colombia</span></li>
+          <li><a href="https://wa.me/573176655518" target="_blank">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>&copy; 2025 PC SOLUTIONS®. Todos los derechos reservados.</p>
+        <div class="footer-bottom-links">
+          <a href="#">Política de privacidad</a>
+          <a href="#">Términos y condiciones</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp floating button -->
+  <a href="https://wa.me/573176655518?text=Hola%20PC%20Solutions%2C%20necesito%20información" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+  </a>
+
+  <!-- Cart toast -->
+  <div id="cart-toast" class="cart-toast">
+    <span id="cart-toast-msg">✅ Producto agregado</span>
+  </div>
+
+  
+  <!-- ══════ CARRITO LATERAL ══════ -->
+  <div id="cart-overlay" class="cart-overlay"></div>
+  <aside id="cart-sidebar" class="cart-sidebar">
+    <div class="cart-header">
+      <h3>🛒 Tu carrito</h3>
+      <button id="cart-close" class="cart-close" aria-label="Cerrar carrito">✕</button>
+    </div>
+    <div id="cart-items" class="cart-items">
+      <div class="cart-empty">
+        <span>🛍️</span>
+        <p>Tu carrito está vacío</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cart-footer" style="display:none;">
+      <div class="cart-summary">
+        <div class="cart-row"><span>Subtotal:</span><span id="cart-subtotal">$0</span></div>
+        <div class="cart-row cart-total-row"><span>Total:</span><span id="cart-total-display">$0</span></div>
+      </div>
+      <div class="cart-form">
+        <input type="text" id="cart-nombre" placeholder="Tu nombre *" />
+        <input type="tel" id="cart-tel" placeholder="WhatsApp *" />
+        <input type="email" id="cart-email" placeholder="Correo (opcional)" />
+        <textarea id="cart-notas" placeholder="Notas del pedido..." rows="2"></textarea>
+      </div>
+      <button class="btn-checkout" id="btn-checkout">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+        Enviar pedido por WhatsApp
+      </button>
+      <button class="btn-clear-cart" id="btn-clear-cart">Vaciar carrito</button>
+    </div>
+  </aside>
+
+  <!-- Botón flotante del carrito -->
+  <button id="cart-btn-float" class="cart-btn-float" aria-label="Ver carrito">
+    🛒 <span id="cart-count-badge" class="cart-count-badge">0</span>
+  </button>
+
+
+  <script src="js/main.js"></script>
+</body>
+</html>
