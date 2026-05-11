@@ -3,7 +3,7 @@
 /* ═══ CONFIG ═══ */
 const API = window.location.hostname === 'localhost'
   ? 'http://localhost:3001/api'
-  : 'https://pcsolutions-backend-production.up.railway.app/api';
+  : '/api';
 
 /* ═══ UTILIDADES ═══ */
 function sanitize(str) {
@@ -196,14 +196,68 @@ async function loadConfig() {
   try {
     const res = await fetch(API + '/config');
     const cfg = await res.json();
-    // Actualizar teléfono y dirección si la API los tiene
+    if (!cfg || typeof cfg !== 'object') return;
+
+    // ── Teléfono ──────────────────────────────────────────────
     if (cfg.telefono) {
-      document.querySelectorAll('[data-config="telefono"]').forEach(el => el.textContent = cfg.telefono);
+      const telDisplay = document.getElementById('cfg-telefono-display');
+      if (telDisplay) telDisplay.textContent = '+57 ' + cfg.telefono.replace(/^57/, '').replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+      const footerTel = document.getElementById('cfg-footer-tel');
+      if (footerTel) {
+        footerTel.textContent = '+57 ' + cfg.telefono.replace(/^57/, '').replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+        footerTel.href = 'tel:+57' + cfg.telefono.replace(/^57/, '');
+      }
     }
+
+    // ── Email ─────────────────────────────────────────────────
+    if (cfg.email) {
+      const emailDisplay = document.getElementById('cfg-email-display');
+      if (emailDisplay) emailDisplay.textContent = cfg.email;
+      const footerEmail = document.getElementById('cfg-footer-email');
+      if (footerEmail) {
+        footerEmail.textContent = cfg.email;
+        footerEmail.href = 'mailto:' + cfg.email;
+      }
+    }
+
+    // ── Dirección ─────────────────────────────────────────────
     if (cfg.direccion) {
-      const el = document.querySelector('[data-config="direccion"]');
-      if (el) el.innerHTML = sanitize(cfg.direccion);
+      const dirDisplay = document.getElementById('cfg-direccion-display');
+      if (dirDisplay) dirDisplay.innerHTML = sanitize(cfg.direccion);
     }
+
+    // ── Horario ───────────────────────────────────────────────
+    if (cfg.horario) {
+      const horDisplay = document.getElementById('cfg-horario-display');
+      if (horDisplay) horDisplay.innerHTML = sanitize(cfg.horario);
+    }
+
+    // ── WhatsApp (todos los links) ────────────────────────────
+    if (cfg.whatsapp) {
+      const waNum = cfg.whatsapp.replace(/\D/g, '');
+      const msgs = {
+        banner:  encodeURIComponent('Hola PC Solutions, quiero asesoría'),
+        float:   encodeURIComponent('Hola PC Solutions, necesito información'),
+        social:  ''
+      };
+      const waBanner = document.querySelector('.btn-whatsapp');
+      if (waBanner) waBanner.href = 'https://wa.me/' + waNum + '?text=' + msgs.banner;
+      const waFloat = document.querySelector('.whatsapp-float');
+      if (waFloat) waFloat.href = 'https://wa.me/' + waNum + '?text=' + msgs.float;
+      const waSocial = document.querySelector('.social-btn[aria-label="WhatsApp"]');
+      if (waSocial) waSocial.href = 'https://wa.me/' + waNum;
+      const waFooter = document.querySelector('footer a[href*="wa.me"]');
+      if (waFooter) waFooter.href = 'https://wa.me/' + waNum;
+    }
+
+    // ── Redes sociales ────────────────────────────────────────
+    if (cfg.instagram && cfg.instagram !== '#') {
+      document.querySelectorAll('.social-btn[aria-label="Instagram"]').forEach(el => { el.href = cfg.instagram; });
+    }
+    if (cfg.facebook && cfg.facebook !== '#') {
+      document.querySelectorAll('.social-btn[aria-label="Facebook"]').forEach(el => { el.href = cfg.facebook; });
+    }
+
   } catch(e) { /* usar valores por defecto del HTML */ }
 }
 
