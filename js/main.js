@@ -3,7 +3,7 @@
 /* ═══ CONFIG ═══ */
 const API = window.location.hostname === 'localhost'
   ? 'http://localhost:3001/api'
-  : '/api';
+  : 'https://pcsolutions-backend-production.up.railway.app/api';
 
 /* ═══ UTILIDADES ═══ */
 function sanitize(str) {
