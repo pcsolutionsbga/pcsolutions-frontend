@@ -21,10 +21,7 @@
       <button class="login-btn" id="login-btn">Ingresar</button>
       <p class="login-error" id="login-error" style="display:none"></p>
     </div>
-    <p style="text-align:center;margin-top:1.5rem;font-size:.78rem;color:#4b5563;">
-      Usuario por defecto: <code style="color:#22c55e">admin</code> / <code style="color:#22c55e">pcsolutions2025</code><br/>
-      <span style="color:#f59e0b">⚠️ Cambia la contraseña después del primer ingreso</span>
-    </p>
+
   </div>
 </div>
 
@@ -39,7 +36,9 @@
       <button class="admin-nav-item" data-section="productos">📦 Productos</button>
       <button class="admin-nav-item" data-section="pedidos">🛒 Pedidos</button>
       <button class="admin-nav-item" data-section="mensajes">✉️ Mensajes</button>
-      <button class="admin-nav-item" data-section="config">⚙️ Configuración</button>
+      <button class="admin-nav-item" data-section="servicios">🛠 Servicios</button>
+      <button class="admin-nav-item" data-section="testimonios">⭐ Opiniones</button>
+      <button class="admin-nav-item" data-section="config">⚙️ Contenido del sitio</button>
       <button class="admin-nav-item" data-section="password">🔑 Contraseña</button>
     </nav>
     <div class="admin-sidebar-footer">
@@ -123,30 +122,41 @@
       <div class="msgs-grid" id="msgs-grid"><p style="color:#6b7280">Cargando...</p></div>
     </section>
 
-    <!-- CONFIGURACIÓN -->
+    <!-- SERVICIOS -->
+    <section id="sec-servicios" style="display:none">
+      <div class="admin-topbar">
+        <h1 class="admin-title">Servicios</h1>
+        <button class="btn-admin-primary" onclick="openServicio()">+ Agregar servicio</button>
+      </div>
+      <div class="admin-table-wrap"><div style="overflow-x:auto">
+        <table class="admin-table"><thead><tr><th>Orden</th><th>Título</th><th>Descripción</th><th>Botón</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="servicios-tbody"></tbody></table>
+      </div></div>
+    </section>
+
+    <!-- OPINIONES -->
+    <section id="sec-testimonios" style="display:none">
+      <div class="admin-topbar">
+        <h1 class="admin-title">Opiniones de clientes</h1>
+        <button class="btn-admin-primary" onclick="openTestimonio()">+ Agregar opinión</button>
+      </div>
+      <p style="color:#9ca3af;font-size:.85rem;margin-bottom:1rem">La sección “Opiniones” solo aparece en el sitio cuando hay al menos una opinión activa. Agrega solo opiniones reales de tus clientes, con su permiso.</p>
+      <div class="admin-table-wrap"><div style="overflow-x:auto">
+        <table class="admin-table"><thead><tr><th>Orden</th><th>Cliente</th><th>Opinión</th><th>Estrellas</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="testimonios-tbody"></tbody></table>
+      </div></div>
+    </section>
+
+    <!-- CONTENIDO DEL SITIO -->
     <section id="sec-config" style="display:none">
       <div class="admin-topbar">
-        <h1 class="admin-title">Configuración del sitio</h1>
+        <h1 class="admin-title">Contenido del sitio</h1>
+        <button class="btn-admin-primary" id="btn-save-config-top">💾 Guardar cambios</button>
       </div>
-      <div class="config-section">
-        <div class="config-section-title">📞 Información de contacto</div>
-        <div class="config-grid">
-          <div class="modal-form-group"><label>Teléfono</label><input type="text" id="cfg-telefono" placeholder="3176655518"/></div>
-          <div class="modal-form-group"><label>WhatsApp (con código país)</label><input type="text" id="cfg-whatsapp" placeholder="573176655518"/></div>
-          <div class="modal-form-group"><label>Email</label><input type="email" id="cfg-email" placeholder="info@pcsolutions.com.co"/></div>
-          <div class="modal-form-group"><label>Horario</label><input type="text" id="cfg-horario" placeholder="Lun-Vie 8am-6pm"/></div>
-          <div class="modal-form-group" style="grid-column:1/-1"><label>Dirección</label><input type="text" id="cfg-direccion" placeholder="Calle 18 # 26-28..."/></div>
-        </div>
-      </div>
-      <div class="config-section">
-        <div class="config-section-title">🔗 Redes sociales</div>
-        <div class="config-grid">
-          <div class="modal-form-group"><label>Instagram URL</label><input type="url" id="cfg-instagram" placeholder="https://instagram.com/..."/></div>
-          <div class="modal-form-group"><label>Facebook URL</label><input type="url" id="cfg-facebook" placeholder="https://facebook.com/..."/></div>
-        </div>
-      </div>
-      <button class="btn-admin-primary" id="btn-save-config">💾 Guardar configuración</button>
-      <p id="config-msg" style="margin-top:.75rem;color:#22c55e;display:none">✅ Configuración guardada</p>
+      <p style="color:#9ca3af;font-size:.85rem;margin-bottom:1rem">Todo lo que cambies aquí se actualiza automáticamente en la página. Si dejas un campo vacío, ese elemento no se muestra.</p>
+      <div id="config-form"></div>
+      <button class="btn-admin-primary" id="btn-save-config">💾 Guardar cambios</button>
+      <p id="config-msg" style="margin-top:.75rem;display:none"></p>
     </section>
 
     <!-- CONTRASEÑA -->
@@ -182,7 +192,7 @@
       </div>
       <div class="modal-form-group"><label>Stock</label><input type="number" id="pm-stock" placeholder="0"/></div>
       <div class="modal-form-group full"><label>Especificaciones</label><input type="text" id="pm-specs" placeholder="Core i7 | 16GB RAM | 512GB SSD | Win 11"/></div>
-      <div class="modal-form-group full"><label>URL de imagen</label><input type="url" id="pm-imagen" placeholder="https://images.unsplash.com/..."/></div>
+      <div class="modal-form-group full"><label>Imagen (enlace https:// o ruta img/…)</label><input type="url" id="pm-imagen" placeholder="https://… o img/mi-foto.jpg"/></div>
       <div class="modal-form-group full"><label>Descripción</label><textarea id="pm-desc" rows="2" placeholder="Descripción breve del producto"></textarea></div>
       <div class="modal-form-group"><label>Badge / etiqueta</label><input type="text" id="pm-badge" placeholder="Más vendido, Gaming, Premium..."/></div>
       <div class="modal-form-group"><label>Estado</label>
@@ -198,181 +208,157 @@
 
 <script>
 'use strict';
-const API = window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : 'https://pcsolutions-backend-production.up.railway.app/api';
-let token = localStorage.getItem('pcs_admin_token');
+const API = window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : 'https://pcsolutions-backend.onrender.com/api';
+let token = null;
+try { token = localStorage.getItem('pcs_admin_token'); } catch {}
 let editingProductId = null;
+const cache = { productos: [], pedidos: [], servicios: [], testimonios: [] };
 
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function formatCOP(n) { return '$' + Number(n).toLocaleString('es-CO'); }
-function fmtDate(s) { return s ? new Date(s).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—'; }
+function fmtDate(s) { return s ? new Date(s.replace(' ','T') + 'Z').toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—'; }
+function authHeaders() { return { 'Content-Type':'application/json', Authorization: 'Bearer ' + token }; }
+const $ = (id) => document.getElementById(id);
+
+async function api(path, opts = {}) {
+  const r = await fetch(API + path, { ...opts, headers: { ...authHeaders(), ...(opts.headers || {}) } });
+  if (r.status === 401) { logout(); throw new Error('Tu sesión venció. Ingresa de nuevo.'); }
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.error || 'Error del servidor');
+  return data;
+}
 
 /* ═══ AUTH ═══ */
 async function checkAuth() {
   if (!token) { showLogin(); return; }
   try {
-    const r = await fetch(API + '/admin/me', { headers: { Authorization: 'Bearer ' + token } });
-    if (r.ok) { showPanel(); } else { showLogin(); }
+    const r = await fetch(API + '/admin/me', { headers: authHeaders() });
+    if (r.ok) showPanel(); else showLogin();
   } catch { showLogin(); }
 }
+function showLogin() { $('login-screen').style.display='flex'; $('admin-panel').style.display='none'; }
+function showPanel() { $('login-screen').style.display='none'; $('admin-panel').style.display='flex'; loadStats(); }
+function logout() { try { localStorage.removeItem('pcs_admin_token'); } catch {} token = null; showLogin(); }
 
-function showLogin() { document.getElementById('login-screen').style.display='flex'; document.getElementById('admin-panel').style.display='none'; }
-function showPanel() { document.getElementById('login-screen').style.display='none'; document.getElementById('admin-panel').style.display='flex'; loadStats(); }
-
-document.getElementById('login-btn').addEventListener('click', async () => {
-  const user = document.getElementById('login-user').value.trim();
-  const pass = document.getElementById('login-pass').value;
-  const errEl = document.getElementById('login-error');
+$('login-btn').addEventListener('click', async () => {
+  const user = $('login-user').value.trim();
+  const pass = $('login-pass').value;
+  const errEl = $('login-error');
   errEl.style.display = 'none';
   if (!user || !pass) { errEl.textContent = 'Ingresa usuario y contraseña'; errEl.style.display='block'; return; }
   try {
-    const r = await fetch(API + '/auth/login', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ username: user, password: pass })
-    });
+    const r = await fetch(API + '/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: user, password: pass }) });
     const data = await r.json();
     if (!r.ok) { errEl.textContent = data.error || 'Error al ingresar'; errEl.style.display='block'; return; }
     token = data.token;
-    localStorage.setItem('pcs_admin_token', token);
+    try { localStorage.setItem('pcs_admin_token', token); } catch {}
+    $('login-pass').value = '';
     showPanel();
   } catch { errEl.textContent = 'Error de conexión con el servidor'; errEl.style.display='block'; }
 });
-document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-btn').click(); });
-
-document.getElementById('admin-logout').addEventListener('click', () => {
-  localStorage.removeItem('pcs_admin_token'); token = null; showLogin();
-});
+$('login-pass').addEventListener('keydown', e => { if (e.key==='Enter') $('login-btn').click(); });
+$('admin-logout').addEventListener('click', logout);
 
 /* ═══ NAVEGACIÓN ═══ */
-const sections = ['dashboard','productos','pedidos','mensajes','config','password'];
+const sections = ['dashboard','productos','pedidos','mensajes','servicios','testimonios','config','password'];
 document.querySelectorAll('.admin-nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const sec = btn.dataset.section;
     document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    sections.forEach(s => document.getElementById('sec-'+s).style.display = s===sec?'block':'none');
-    if (sec==='productos') loadProductos();
-    if (sec==='pedidos')   loadPedidos();
-    if (sec==='mensajes')  loadMensajes();
-    if (sec==='config')    loadConfig();
-    if (sec==='dashboard') loadStats();
+    sections.forEach(s => $('sec-'+s).style.display = s===sec?'block':'none');
+    ({ productos: loadProductos, pedidos: loadPedidos, mensajes: loadMensajes, servicios: loadServicios,
+       testimonios: loadTestimonios, config: loadConfig, dashboard: loadStats }[sec] || (()=>{}))();
   });
 });
-
-function authHeaders() { return { 'Content-Type':'application/json', Authorization: 'Bearer ' + token }; }
 
 /* ═══ DASHBOARD ═══ */
 async function loadStats() {
   try {
-    const r = await fetch(API + '/admin/stats', { headers: authHeaders() });
-    const s = await r.json();
-    document.getElementById('st-productos').textContent  = s.productos;
-    document.getElementById('st-pedidos').textContent    = s.pedidos;
-    document.getElementById('st-pendientes').textContent = s.pendientes;
-    document.getElementById('st-mensajes').textContent   = s.mensajes;
-    document.getElementById('st-ingresos').textContent   = formatCOP(s.ingresos);
+    const s = await api('/admin/stats');
+    $('st-productos').textContent = s.productos; $('st-pedidos').textContent = s.pedidos;
+    $('st-pendientes').textContent = s.pendientes; $('st-mensajes').textContent = s.mensajes;
+    $('st-ingresos').textContent = formatCOP(s.ingresos);
   } catch(e) { console.error(e); }
 }
 
 /* ═══ PRODUCTOS ═══ */
 async function loadProductos() {
   try {
-    const r = await fetch(API + '/admin/productos', { headers: authHeaders() });
-    const productos = await r.json();
-    document.getElementById('prod-count').textContent = productos.length + ' productos';
-    document.getElementById('productos-tbody').innerHTML = productos.map(p => `
+    const productos = cache.productos = await api('/admin/productos');
+    $('prod-count').textContent = productos.length + ' productos';
+    $('productos-tbody').innerHTML = productos.map(p => `
       <tr>
-        <td><img src="${p.imagen_url||''}" alt="${p.nombre}" onerror="this.style.display='none'"/></td>
-        <td><strong style="color:#fff">${p.nombre}</strong><br/><span style="font-size:.75rem;color:#6b7280">${p.especificaciones||''}</span></td>
-        <td><span class="admin-badge">${p.categoria}</span></td>
+        <td><img src="${esc(p.imagen_url)}" alt="" onerror="this.style.display='none'"/></td>
+        <td><strong style="color:#fff">${esc(p.nombre)}</strong><br/><span style="font-size:.75rem;color:#6b7280">${esc(p.especificaciones)}</span></td>
+        <td><span class="admin-badge">${esc(p.categoria)}</span></td>
         <td style="color:#22c55e;font-weight:700">${formatCOP(p.precio)}</td>
-        <td>${p.stock||0}</td>
+        <td>${Number(p.stock)||0}</td>
         <td><span class="badge-estado ${p.activo?'badge-activo':'badge-inactivo'}">${p.activo?'Activo':'Inactivo'}</span></td>
         <td style="white-space:nowrap">
-          <button class="btn-admin-sm btn-edit" onclick="openProductModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">✏️ Editar</button>
-          <button class="btn-admin-sm btn-delete" onclick="deleteProducto(${p.id})" style="margin-left:4px">🗑 Borrar</button>
+          <button class="btn-admin-sm btn-edit" onclick="openProductModal(${Number(p.id)})">✏️ Editar</button>
+          <button class="btn-admin-sm btn-delete" onclick="deleteProducto(${Number(p.id)})" style="margin-left:4px">🗑 Borrar</button>
         </td>
-      </tr>
-    `).join('') || '<tr><td colspan="7" style="text-align:center;color:#6b7280;padding:2rem">No hay productos</td></tr>';
-  } catch(e) { console.error(e); }
+      </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:#6b7280;padding:2rem">No hay productos</td></tr>';
+  } catch(e) { alert(e.message); }
 }
 
-function openProductModal(p) {
+function openProductModal(id) {
+  const p = id ? cache.productos.find(x => Number(x.id) === Number(id)) : null;
   editingProductId = p ? p.id : null;
-  document.getElementById('modal-title').textContent = p ? '✏️ Editar producto' : '+ Agregar producto';
-  document.getElementById('pm-nombre').value      = p?.nombre || '';
-  document.getElementById('pm-precio').value      = p?.precio || '';
-  document.getElementById('pm-precio-antes').value= p?.precio_antes || '';
-  document.getElementById('pm-categoria').value   = p?.categoria || 'laptops';
-  document.getElementById('pm-stock').value       = p?.stock || 0;
-  document.getElementById('pm-specs').value       = p?.especificaciones || '';
-  document.getElementById('pm-imagen').value      = p?.imagen_url || '';
-  document.getElementById('pm-desc').value        = p?.descripcion || '';
-  document.getElementById('pm-badge').value       = p?.badge || '';
-  document.getElementById('pm-activo').value      = p ? String(p.activo) : '1';
-  document.getElementById('product-modal').style.display = 'flex';
+  $('modal-title').textContent = p ? '✏️ Editar producto' : '+ Agregar producto';
+  $('pm-nombre').value = p?.nombre || ''; $('pm-precio').value = p?.precio || '';
+  $('pm-precio-antes').value = p?.precio_antes || ''; $('pm-categoria').value = p?.categoria || 'laptops';
+  $('pm-stock').value = p?.stock || 0; $('pm-specs').value = p?.especificaciones || '';
+  $('pm-imagen').value = p?.imagen_url || ''; $('pm-desc').value = p?.descripcion || '';
+  $('pm-badge').value = p?.badge || ''; $('pm-activo').value = p ? String(p.activo) : '1';
+  $('product-modal').style.display = 'flex';
 }
-function closeProductModal() { document.getElementById('product-modal').style.display='none'; editingProductId=null; }
+function closeProductModal() { $('product-modal').style.display='none'; editingProductId=null; }
 
-document.getElementById('btn-save-product').addEventListener('click', async () => {
+$('btn-save-product').addEventListener('click', async () => {
   const body = {
-    nombre:           document.getElementById('pm-nombre').value.trim(),
-    precio:           document.getElementById('pm-precio').value,
-    precio_antes:     document.getElementById('pm-precio-antes').value,
-    categoria:        document.getElementById('pm-categoria').value,
-    stock:            document.getElementById('pm-stock').value,
-    especificaciones: document.getElementById('pm-specs').value.trim(),
-    imagen_url:       document.getElementById('pm-imagen').value.trim(),
-    descripcion:      document.getElementById('pm-desc').value.trim(),
-    badge:            document.getElementById('pm-badge').value.trim(),
-    activo:           document.getElementById('pm-activo').value,
+    nombre: $('pm-nombre').value.trim(), precio: $('pm-precio').value, precio_antes: $('pm-precio-antes').value,
+    categoria: $('pm-categoria').value, stock: $('pm-stock').value, especificaciones: $('pm-specs').value.trim(),
+    imagen_url: $('pm-imagen').value.trim(), descripcion: $('pm-desc').value.trim(),
+    badge: $('pm-badge').value.trim(), activo: $('pm-activo').value,
   };
   if (!body.nombre || !body.precio) { alert('Nombre y precio son obligatorios'); return; }
-  const url    = editingProductId ? API+'/admin/productos/'+editingProductId : API+'/admin/productos';
-  const method = editingProductId ? 'PUT' : 'POST';
   try {
-    const r = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
-    if (!r.ok) throw new Error((await r.json()).error);
+    await api(editingProductId ? '/admin/productos/'+editingProductId : '/admin/productos', { method: editingProductId ? 'PUT' : 'POST', body: JSON.stringify(body) });
     closeProductModal(); loadProductos(); loadStats();
   } catch(e) { alert('Error: ' + e.message); }
 });
 
 async function deleteProducto(id) {
   if (!confirm('¿Eliminar este producto? Esta acción no se puede deshacer.')) return;
-  await fetch(API+'/admin/productos/'+id, { method:'DELETE', headers: authHeaders() });
-  loadProductos(); loadStats();
+  try { await api('/admin/productos/'+id, { method:'DELETE' }); loadProductos(); loadStats(); } catch(e) { alert(e.message); }
 }
 
 /* ═══ PEDIDOS ═══ */
 const ESTADOS = ['pendiente','confirmado','enviado','cancelado'];
 async function loadPedidos() {
   try {
-    const r = await fetch(API + '/admin/pedidos', { headers: authHeaders() });
-    const pedidos = await r.json();
-    document.getElementById('pedidos-tbody').innerHTML = pedidos.map(p => {
-      let items = [];
-      try { items = JSON.parse(p.items); } catch {}
-      return `<tr>
-        <td style="color:#22c55e;font-weight:700">#${p.id}</td>
-        <td><strong style="color:#fff">${p.cliente_nombre}</strong><br/><span style="font-size:.75rem;color:#6b7280">${p.cliente_email||''}</span></td>
-        <td>${p.cliente_tel||'—'}</td>
+    const pedidos = cache.pedidos = await api('/admin/pedidos');
+    $('pedidos-tbody').innerHTML = pedidos.map(p => `<tr>
+        <td style="color:#22c55e;font-weight:700">#${Number(p.id)}</td>
+        <td><strong style="color:#fff">${esc(p.cliente_nombre)}</strong><br/><span style="font-size:.75rem;color:#6b7280">${esc(p.cliente_email)}</span></td>
+        <td>${esc(p.cliente_tel) || '—'}</td>
         <td style="color:#22c55e;font-weight:700">${formatCOP(p.total)}</td>
-        <td><select class="btn-admin-sm" onchange="updatePedidoEstado(${p.id},this.value)" style="background:#111;color:#fff;border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:4px 8px;">
+        <td><select class="btn-admin-sm" onchange="updatePedidoEstado(${Number(p.id)},this.value)" style="background:#111;color:#fff;border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:4px 8px;">
           ${ESTADOS.map(e=>`<option value="${e}" ${e===p.estado?'selected':''}>${e}</option>`).join('')}
         </select></td>
         <td style="font-size:.75rem;color:#6b7280">${fmtDate(p.created_at)}</td>
-        <td><button class="btn-admin-sm btn-edit" onclick="verDetallePedido(${JSON.stringify(p).replace(/"/g,'&quot;')})">👁 Ver</button></td>
-      </tr>`;
-    }).join('') || '<tr><td colspan="7" style="text-align:center;color:#6b7280;padding:2rem">No hay pedidos aún</td></tr>';
-  } catch(e) { console.error(e); }
+        <td><button class="btn-admin-sm btn-edit" onclick="verDetallePedido(${Number(p.id)})">👁 Ver</button></td>
+      </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:#6b7280;padding:2rem">No hay pedidos aún</td></tr>';
+  } catch(e) { alert(e.message); }
 }
-
 async function updatePedidoEstado(id, estado) {
-  await fetch(API+'/admin/pedidos/'+id+'/estado', { method:'PUT', headers: authHeaders(), body: JSON.stringify({estado}) });
-  loadStats();
+  try { await api('/admin/pedidos/'+id+'/estado', { method:'PUT', body: JSON.stringify({estado}) }); loadStats(); } catch(e) { alert(e.message); }
 }
-
-function verDetallePedido(p) {
-  let items = [];
-  try { items = JSON.parse(p.items); } catch {}
+function verDetallePedido(id) {
+  const p = cache.pedidos.find(x => Number(x.id) === Number(id)); if (!p) return;
+  let items = []; try { items = JSON.parse(p.items); } catch {}
   const lineas = items.map(i=>`• ${i.nombre} x${i.qty} = ${formatCOP(i.precio*i.qty)}`).join('\n');
   alert(`PEDIDO #${p.id}\n\nCliente: ${p.cliente_nombre}\nTel: ${p.cliente_tel||'—'}\nEmail: ${p.cliente_email||'—'}\n\nProductos:\n${lineas}\n\nTotal: ${formatCOP(p.total)}\n\nNotas: ${p.notas||'Ninguna'}\nFecha: ${fmtDate(p.created_at)}`);
 }
@@ -380,85 +366,198 @@ function verDetallePedido(p) {
 /* ═══ MENSAJES ═══ */
 async function loadMensajes() {
   try {
-    const r = await fetch(API + '/admin/mensajes', { headers: authHeaders() });
-    const msgs = await r.json();
-    const grid = document.getElementById('msgs-grid');
+    const msgs = await api('/admin/mensajes');
+    const grid = $('msgs-grid');
     if (!msgs.length) { grid.innerHTML = '<p style="color:#6b7280">No hay mensajes aún</p>'; return; }
     grid.innerHTML = msgs.map(m => `
       <div class="msg-card ${!m.leido?'unread':''}">
-        <div class="msg-avatar">${(m.nombre||'?')[0].toUpperCase()}</div>
+        <div class="msg-avatar">${esc((m.nombre||'?')[0].toUpperCase())}</div>
         <div class="msg-content">
-          <div class="msg-name">${m.nombre||'Anónimo'} ${!m.leido?'<span style="color:#22c55e;font-size:.72rem">● NUEVO</span>':''}</div>
-          <div class="msg-meta">${m.email||''} ${m.telefono?'· '+m.telefono:''} · ${m.servicio||''} · ${fmtDate(m.created_at)}</div>
-          <div class="msg-text">${m.mensaje||''}</div>
-          ${!m.leido?`<button class="btn-admin-sm btn-edit" style="margin-top:.5rem" onclick="marcarLeido(${m.id},this)">✓ Marcar como leído</button>`:''}
+          <div class="msg-name">${esc(m.nombre||'Anónimo')} ${!m.leido?'<span style="color:#22c55e;font-size:.72rem">● NUEVO</span>':''}</div>
+          <div class="msg-meta">${esc(m.email)} ${m.telefono?'· '+esc(m.telefono):''} · ${esc(m.servicio)} · ${fmtDate(m.created_at)}</div>
+          <div class="msg-text">${esc(m.mensaje)}</div>
+          ${!m.leido?`<button class="btn-admin-sm btn-edit" style="margin-top:.5rem" onclick="marcarLeido(${Number(m.id)},this)">✓ Marcar como leído</button>`:''}
         </div>
-      </div>
-    `).join('');
-  } catch(e) { console.error(e); }
+      </div>`).join('');
+  } catch(e) { alert(e.message); }
 }
-
 async function marcarLeido(id, btn) {
-  await fetch(API+'/admin/mensajes/'+id+'/leido', { method:'PUT', headers: authHeaders() });
-  btn.closest('.msg-card').classList.remove('unread');
-  btn.remove(); loadStats();
+  try { await api('/admin/mensajes/'+id+'/leido', { method:'PUT' }); btn.closest('.msg-card').classList.remove('unread'); btn.remove(); loadStats(); } catch(e) { alert(e.message); }
 }
 
-/* ═══ CONFIGURACIÓN ═══ */
+/* ═══ FORMULARIO GENÉRICO (servicios y opiniones) ═══ */
+function openForm(titulo, fields, values, onSave) {
+  document.getElementById('generic-modal')?.remove();
+  const wrap = document.createElement('div');
+  wrap.id = 'generic-modal'; wrap.className = 'modal-overlay'; wrap.style.display = 'flex';
+  wrap.innerHTML = `<div class="modal-box"><h3 class="modal-title">${esc(titulo)}</h3><div class="modal-grid">` +
+    fields.map(f => {
+      const v = values?.[f.k] ?? f.def ?? '';
+      let input;
+      if (f.type === 'textarea') input = `<textarea data-k="${f.k}" rows="3" maxlength="${f.max||600}"></textarea>`;
+      else if (f.type === 'select') input = `<select data-k="${f.k}">${f.options.map(o => `<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('')}</select>`;
+      else input = `<input data-k="${f.k}" type="${f.type||'text'}" maxlength="${f.max||100}"/>`;
+      return `<div class="modal-form-group ${f.full?'full':''}"><label>${esc(f.label)}</label>${input}</div>`;
+    }).join('') +
+    `</div><p id="gm-err" style="color:#f87171;display:none;margin-top:.5rem"></p><div class="modal-actions"><button class="btn-modal-cancel" id="gm-cancel">Cancelar</button><button class="btn-admin-primary" id="gm-save">💾 Guardar</button></div></div>`;
+  document.body.appendChild(wrap);
+  fields.forEach(f => { wrap.querySelector(`[data-k="${f.k}"]`).value = values?.[f.k] ?? f.def ?? ''; });
+  wrap.querySelector('#gm-cancel').onclick = () => wrap.remove();
+  wrap.querySelector('#gm-save').onclick = async () => {
+    const body = {}; fields.forEach(f => { body[f.k] = wrap.querySelector(`[data-k="${f.k}"]`).value; });
+    try { await onSave(body); wrap.remove(); }
+    catch (e) { const er = wrap.querySelector('#gm-err'); er.textContent = e.message; er.style.display = 'block'; }
+  };
+}
+
+/* ═══ SERVICIOS ═══ */
+const ICONOS = [['wrench','Herramienta (soporte)'],['laptop','Portátil'],['cpu','Procesador (ensamble)'],['network','Redes / WiFi'],['shield','Seguridad'],['box','Caja (repuestos)'],['monitor','Monitor'],['phone','Teléfono']];
+const SERV_FIELDS = [
+  { k:'titulo', label:'Título *', full:true, max:80 },
+  { k:'descripcion', label:'Descripción', type:'textarea', full:true, max:300 },
+  { k:'icono', label:'Ícono', type:'select', options: ICONOS, def:'wrench' },
+  { k:'boton_texto', label:'Texto del botón', def:'Solicitar', max:30 },
+  { k:'destino', label:'El botón lleva a', type:'select', options:[['contacto','Formulario de contacto'],['productos','Catálogo de productos']], def:'contacto' },
+  { k:'orden', label:'Orden (1 = primero)', type:'number', def:0 },
+  { k:'activo', label:'Estado', type:'select', options:[['1','Visible'],['0','Oculto']], def:'1' },
+];
+async function loadServicios() {
+  try {
+    const items = cache.servicios = await api('/admin/servicios');
+    $('servicios-tbody').innerHTML = items.map(s => `<tr>
+      <td>${Number(s.orden)}</td><td><strong style="color:#fff">${esc(s.titulo)}</strong></td>
+      <td style="max-width:320px;color:#9ca3af;font-size:.85rem">${esc(s.descripcion)}</td>
+      <td>${esc(s.boton_texto)} → ${esc(s.destino)}</td>
+      <td><span class="badge-estado ${s.activo?'badge-activo':'badge-inactivo'}">${s.activo?'Visible':'Oculto'}</span></td>
+      <td style="white-space:nowrap"><button class="btn-admin-sm btn-edit" onclick="openServicio(${Number(s.id)})">✏️ Editar</button>
+      <button class="btn-admin-sm btn-delete" style="margin-left:4px" onclick="delItem('servicios',${Number(s.id)})">🗑 Borrar</button></td></tr>`).join('')
+      || '<tr><td colspan="6" style="text-align:center;color:#6b7280;padding:2rem">No hay servicios</td></tr>';
+  } catch(e) { alert(e.message); }
+}
+function openServicio(id) {
+  const s = id ? cache.servicios.find(x => Number(x.id) === Number(id)) : null;
+  openForm(s ? 'Editar servicio' : 'Agregar servicio', SERV_FIELDS, s ? { ...s, activo: String(s.activo) } : null, async (body) => {
+    await api(s ? '/admin/servicios/'+s.id : '/admin/servicios', { method: s ? 'PUT' : 'POST', body: JSON.stringify(body) });
+    loadServicios();
+  });
+}
+
+/* ═══ OPINIONES ═══ */
+const TEST_FIELDS = [
+  { k:'nombre', label:'Nombre del cliente *', max:80 },
+  { k:'cargo', label:'Cargo o descripción (opcional)', max:80 },
+  { k:'texto', label:'Opinión *', type:'textarea', full:true, max:600 },
+  { k:'estrellas', label:'Estrellas (1 a 5)', type:'number', def:5 },
+  { k:'orden', label:'Orden (1 = primero)', type:'number', def:0 },
+  { k:'activo', label:'Estado', type:'select', options:[['1','Visible'],['0','Oculta']], def:'1' },
+];
+async function loadTestimonios() {
+  try {
+    const items = cache.testimonios = await api('/admin/testimonios');
+    $('testimonios-tbody').innerHTML = items.map(t => `<tr>
+      <td>${Number(t.orden)}</td><td><strong style="color:#fff">${esc(t.nombre)}</strong><br/><span style="font-size:.75rem;color:#6b7280">${esc(t.cargo)}</span></td>
+      <td style="max-width:360px;color:#9ca3af;font-size:.85rem">${esc(t.texto)}</td><td>${'★'.repeat(Number(t.estrellas)||0)}</td>
+      <td><span class="badge-estado ${t.activo?'badge-activo':'badge-inactivo'}">${t.activo?'Visible':'Oculta'}</span></td>
+      <td style="white-space:nowrap"><button class="btn-admin-sm btn-edit" onclick="openTestimonio(${Number(t.id)})">✏️ Editar</button>
+      <button class="btn-admin-sm btn-delete" style="margin-left:4px" onclick="delItem('testimonios',${Number(t.id)})">🗑 Borrar</button></td></tr>`).join('')
+      || '<tr><td colspan="6" style="text-align:center;color:#6b7280;padding:2rem">Aún no hay opiniones. La sección no se muestra en el sitio hasta que agregues una.</td></tr>';
+  } catch(e) { alert(e.message); }
+}
+function openTestimonio(id) {
+  const t = id ? cache.testimonios.find(x => Number(x.id) === Number(id)) : null;
+  openForm(t ? 'Editar opinión' : 'Agregar opinión', TEST_FIELDS, t ? { ...t, activo: String(t.activo) } : null, async (body) => {
+    await api(t ? '/admin/testimonios/'+t.id : '/admin/testimonios', { method: t ? 'PUT' : 'POST', body: JSON.stringify(body) });
+    loadTestimonios();
+  });
+}
+async function delItem(ruta, id) {
+  if (!confirm('¿Eliminar este elemento? Esta acción no se puede deshacer.')) return;
+  try { await api('/admin/'+ruta+'/'+id, { method:'DELETE' }); ruta === 'servicios' ? loadServicios() : loadTestimonios(); } catch(e) { alert(e.message); }
+}
+
+/* ═══ CONTENIDO DEL SITIO ═══ */
+// [grupo, clave, etiqueta, tipo, ayuda]
+const CONFIG_FIELDS = [
+  ['📞 Contacto', 'telefono', 'Teléfono', 'text', 'Ej: 3176655518'],
+  ['📞 Contacto', 'whatsapp', 'WhatsApp (con indicativo de país)', 'text', 'Ej: 573176655518. De aquí salen todos los botones de WhatsApp.'],
+  ['📞 Contacto', 'email', 'Correo', 'text', ''],
+  ['📞 Contacto', 'horario', 'Horario', 'text', 'Separa líneas con "|". Ej: Lun-Vie 8am-6pm | Sáb 9am-2pm'],
+  ['📞 Contacto', 'direccion', 'Dirección', 'text', 'También se usa para el mapa.'],
+  ['🔗 Redes sociales', 'instagram', 'Instagram', 'text', 'Enlace completo que empiece por https://. Vacío = no se muestra el botón.'],
+  ['🔗 Redes sociales', 'facebook', 'Facebook', 'text', 'Enlace completo que empiece por https://. Vacío = no se muestra el botón.'],
+  ['🏠 Portada', 'nombre', 'Nombre del negocio', 'text', 'Se usa en el pie de página y en los textos legales.'],
+  ['🏠 Portada', 'hero_badge', 'Etiqueta sobre el título', 'text', 'Ej: Atención en Bucaramanga. Vacío = se oculta.'],
+  ['🏠 Portada', 'hero_titulo', 'Título (primera línea)', 'text', ''],
+  ['🏠 Portada', 'hero_resaltado', 'Título (línea en verde)', 'text', ''],
+  ['🏠 Portada', 'hero_subtitulo', 'Texto de apoyo', 'area', ''],
+  ['📊 Cifras de la portada', 'stat1_num', 'Cifra 1 — dato', 'text', 'Escribe solo datos reales (ej: 8 años). Vacío = no se muestra.'],
+  ['📊 Cifras de la portada', 'stat1_label', 'Cifra 1 — descripción', 'text', ''],
+  ['📊 Cifras de la portada', 'stat2_num', 'Cifra 2 — dato', 'text', ''],
+  ['📊 Cifras de la portada', 'stat2_label', 'Cifra 2 — descripción', 'text', ''],
+  ['📊 Cifras de la portada', 'stat3_num', 'Cifra 3 — dato', 'text', ''],
+  ['📊 Cifras de la portada', 'stat3_label', 'Cifra 3 — descripción', 'text', ''],
+  ['🏷 Marcas', 'marcas', 'Marcas (separadas por coma)', 'text', 'Ej: DELL,HP,LENOVO. Vacío = no se muestra la franja.'],
+  ['👥 Quiénes somos', 'about_titulo', 'Título', 'text', ''],
+  ['👥 Quiénes somos', 'about_texto', 'Texto', 'area', 'Vacío = no se muestra la sección. Cada salto de línea es un párrafo nuevo.'],
+  ['👥 Quiénes somos', 'about_imagen', 'Foto del local o del equipo', 'text', 'Enlace https:// o ruta como img/local.jpg (sube la foto a la carpeta img del sitio).'],
+  ['📍 Mapa', 'mapa_mostrar', 'Mostrar mapa de Google (usa la dirección)', 'flag', ''],
+  ['📍 Mapa', 'mapa_embed', 'Enlace de mapa propio (opcional)', 'text', 'En Google Maps: Compartir → Insertar un mapa → copia solo el enlace que sale en src="…".'],
+  ['⚖️ Textos legales', 'legal_privacidad', 'Política de privacidad (Ley 1581 de 2012)', 'legal', 'Puedes usar {{nombre}}, {{direccion}}, {{email}} y {{telefono}}; se reemplazan solos. Hazla revisar por un abogado.'],
+  ['⚖️ Textos legales', 'legal_terminos', 'Términos y condiciones', 'legal', 'Igual que arriba. Ajústalo a tus políticas reales de garantía y devoluciones.'],
+  ['🛡 Protección anti-spam (Cloudflare Turnstile)', 'turnstile_sitekey', 'Clave del sitio (Site key)', 'text', 'Se obtiene gratis en el panel de Cloudflare → Turnstile. Vacío = protección apagada.'],
+];
+
 async function loadConfig() {
   try {
-    const r = await fetch(API + '/config');
-    const cfg = await r.json();
-    document.getElementById('cfg-telefono').value  = cfg.telefono||'';
-    document.getElementById('cfg-whatsapp').value  = cfg.whatsapp||'';
-    document.getElementById('cfg-email').value     = cfg.email||'';
-    document.getElementById('cfg-horario').value   = cfg.horario||'';
-    document.getElementById('cfg-direccion').value = cfg.direccion||'';
-    document.getElementById('cfg-instagram').value = cfg.instagram||'';
-    document.getElementById('cfg-facebook').value  = cfg.facebook||'';
+    const cfg = await (await fetch(API + '/config')).json();
+    let grupo = '', html = '';
+    CONFIG_FIELDS.forEach(([g, k, label, tipo, ayuda]) => {
+      if (g !== grupo) { if (grupo) html += '</div></div>'; html += `<div class="config-section"><div class="config-section-title">${esc(g)}</div><div class="config-grid">`; grupo = g; }
+      const full = tipo === 'area' || tipo === 'legal' || k === 'direccion' ? 'style="grid-column:1/-1"' : '';
+      let campo;
+      if (tipo === 'area') campo = `<textarea data-cfg="${k}" rows="3"></textarea>`;
+      else if (tipo === 'legal') campo = `<textarea data-cfg="${k}" rows="12" style="font-size:.82rem"></textarea>`;
+      else if (tipo === 'flag') campo = `<select data-cfg="${k}"><option value="1">Sí, mostrar</option><option value="0">No mostrar</option></select>`;
+      else campo = `<input type="text" data-cfg="${k}"/>`;
+      html += `<div class="modal-form-group" ${full}><label>${esc(label)}</label>${campo}${ayuda ? `<small style="color:#6b7280;display:block;margin-top:4px">${esc(ayuda)}</small>` : ''}</div>`;
+    });
+    $('config-form').innerHTML = html + '</div></div>';
+    document.querySelectorAll('#config-form [data-cfg]').forEach(el => { el.value = cfg[el.dataset.cfg] ?? ''; });
   } catch(e) { console.error(e); }
 }
 
-document.getElementById('btn-save-config').addEventListener('click', async () => {
-  const body = {
-    telefono:  document.getElementById('cfg-telefono').value.trim(),
-    whatsapp:  document.getElementById('cfg-whatsapp').value.trim(),
-    email:     document.getElementById('cfg-email').value.trim(),
-    horario:   document.getElementById('cfg-horario').value.trim(),
-    direccion: document.getElementById('cfg-direccion').value.trim(),
-    instagram: document.getElementById('cfg-instagram').value.trim(),
-    facebook:  document.getElementById('cfg-facebook').value.trim(),
-  };
+async function saveConfig() {
+  const body = {};
+  document.querySelectorAll('#config-form [data-cfg]').forEach(el => { body[el.dataset.cfg] = el.value.trim(); });
+  const msg = $('config-msg');
   try {
-    const r = await fetch(API+'/admin/config', { method:'PUT', headers: authHeaders(), body: JSON.stringify(body) });
-    if (!r.ok) throw new Error('Error al guardar');
-    const msg = document.getElementById('config-msg');
-    msg.style.display = 'block';
-    setTimeout(() => msg.style.display='none', 3000);
-  } catch(e) { alert('Error: ' + e.message); }
-});
+    await api('/admin/config', { method:'PUT', body: JSON.stringify(body) });
+    msg.textContent = '✅ Cambios guardados. Ya se ven en el sitio.'; msg.style.color = '#22c55e';
+  } catch(e) { msg.textContent = '❌ ' + e.message; msg.style.color = '#f87171'; }
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 6000);
+}
+$('btn-save-config').addEventListener('click', saveConfig);
+$('btn-save-config-top').addEventListener('click', saveConfig);
 
 /* ═══ CONTRASEÑA ═══ */
-document.getElementById('btn-change-pwd').addEventListener('click', async () => {
-  const actual    = document.getElementById('pwd-actual').value;
-  const nueva     = document.getElementById('pwd-nueva').value;
-  const confirmar = document.getElementById('pwd-confirmar').value;
-  const msgEl = document.getElementById('pwd-msg');
+$('btn-change-pwd').addEventListener('click', async () => {
+  const actual = $('pwd-actual').value, nueva = $('pwd-nueva').value, confirmar = $('pwd-confirmar').value;
+  const msgEl = $('pwd-msg');
+  const show = (t, c) => { msgEl.textContent = t; msgEl.style.color = c; msgEl.style.display = 'block'; };
   msgEl.style.display = 'none';
-  if (!actual||!nueva) { msgEl.textContent='Completa todos los campos'; msgEl.style.color='#f87171'; msgEl.style.display='block'; return; }
-  if (nueva !== confirmar) { msgEl.textContent='Las contraseñas no coinciden'; msgEl.style.color='#f87171'; msgEl.style.display='block'; return; }
-  if (nueva.length < 8) { msgEl.textContent='La contraseña debe tener al menos 8 caracteres'; msgEl.style.color='#f87171'; msgEl.style.display='block'; return; }
+  if (!actual || !nueva) return show('Completa todos los campos', '#f87171');
+  if (nueva !== confirmar) return show('Las contraseñas no coinciden', '#f87171');
+  if (nueva.length < 8) return show('La contraseña debe tener al menos 8 caracteres', '#f87171');
   try {
-    const r = await fetch(API+'/admin/password', { method:'PUT', headers: authHeaders(), body: JSON.stringify({actual,nueva}) });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.error);
-    msgEl.textContent = '✅ Contraseña cambiada exitosamente'; msgEl.style.color='#22c55e'; msgEl.style.display='block';
-    document.getElementById('pwd-actual').value=''; document.getElementById('pwd-nueva').value=''; document.getElementById('pwd-confirmar').value='';
-  } catch(e) { msgEl.textContent='❌ '+e.message; msgEl.style.color='#f87171'; msgEl.style.display='block'; }
+    await api('/admin/password', { method:'PUT', body: JSON.stringify({ actual, nueva }) });
+    show('✅ Contraseña cambiada exitosamente', '#22c55e');
+    $('pwd-actual').value = $('pwd-nueva').value = $('pwd-confirmar').value = '';
+  } catch(e) { show('❌ ' + e.message, '#f87171'); }
 });
 
-/* ═══ INIT ═══ */
 checkAuth();
 </script>
+
 </body>
 </html>

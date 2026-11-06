@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' http://localhost:3001 https://pcsolutions-backend.onrender.com; object-src 'none'; base-uri 'self'; form-action 'self';" />
+  <meta name="robots" content="index, follow" />
+  <title>Información legal — PC SOLUTIONS®</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="navbar" class="scrolled">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">PC <span class="accent">SOLUTIONS</span><sup>®</sup></a>
+      <a href="index.html" class="btn-nav">← Volver al sitio</a>
+    </div>
+  </header>
+
+  <main class="legal-page">
+    <div class="container legal-container">
+      <nav class="legal-tabs">
+        <a href="legal.html?doc=privacidad" id="tab-privacidad">Política de privacidad</a>
+        <a href="legal.html?doc=terminos" id="tab-terminos">Términos y condiciones</a>
+      </nav>
+      <h1 id="legal-title" class="section-title">Cargando…</h1>
+      <div id="legal-body" class="legal-body"></div>
+      <p id="legal-updated" class="legal-note"></p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-bottom-inner" style="padding:1.5rem 0">
+      <p>&copy; <span id="y"></span> <span id="brand">PC SOLUTIONS®</span>. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+  <script src="js/legal.js"></script>
+</body>
+</html>
