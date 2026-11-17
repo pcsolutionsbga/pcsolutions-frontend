@@ -368,9 +368,14 @@ async function loadPedidos() {
           ${ESTADOS.map(e=>`<option value="${e}" ${e===p.estado?'selected':''}>${e}</option>`).join('')}
         </select></td>
         <td style="font-size:.75rem;color:#6b7280">${fmtDate(p.created_at)}</td>
-        <td><button class="btn-admin-sm btn-edit" onclick="verDetallePedido(${Number(p.id)})">👁 Ver</button></td>
+        <td style="white-space:nowrap"><button class="btn-admin-sm btn-edit" onclick="verDetallePedido(${Number(p.id)})">👁 Ver</button>
+          <button class="btn-admin-sm btn-delete" style="margin-left:4px" onclick="deletePedido(${Number(p.id)})">🗑 Borrar</button></td>
       </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:#6b7280;padding:2rem">No hay pedidos aún</td></tr>';
   } catch(e) { alert(e.message); }
+}
+async function deletePedido(id) {
+  if (!confirm('¿Borrar el pedido #' + Number(id) + ' y los datos personales del cliente? Esta acción no se puede deshacer.')) return;
+  try { await api('/admin/pedidos/'+id, { method:'DELETE' }); loadPedidos(); loadStats(); } catch(e) { alert(e.message); }
 }
 async function updatePedidoEstado(id, estado) {
   try { await api('/admin/pedidos/'+id+'/estado', { method:'PUT', body: JSON.stringify({estado}) }); loadStats(); } catch(e) { alert(e.message); }
@@ -395,10 +400,17 @@ async function loadMensajes() {
           <div class="msg-name">${esc(m.nombre||'Anónimo')} ${!m.leido?'<span style="color:#22c55e;font-size:.72rem">● NUEVO</span>':''}</div>
           <div class="msg-meta">${esc(m.email)} ${m.telefono?'· '+esc(m.telefono):''} · ${esc(m.servicio)} · ${fmtDate(m.created_at)}</div>
           <div class="msg-text">${esc(m.mensaje)}</div>
-          ${!m.leido?`<button class="btn-admin-sm btn-edit" style="margin-top:.5rem" onclick="marcarLeido(${Number(m.id)},this)">✓ Marcar como leído</button>`:''}
+          <div style="margin-top:.5rem">
+            ${!m.leido?`<button class="btn-admin-sm btn-edit" onclick="marcarLeido(${Number(m.id)},this)">✓ Marcar como leído</button>`:''}
+            <button class="btn-admin-sm btn-delete" style="margin-left:4px" onclick="deleteMensaje(${Number(m.id)})">🗑 Borrar</button>
+          </div>
         </div>
       </div>`).join('');
   } catch(e) { alert(e.message); }
+}
+async function deleteMensaje(id) {
+  if (!confirm('¿Borrar este mensaje y los datos personales de quien lo envió? Esta acción no se puede deshacer.')) return;
+  try { await api('/admin/mensajes/'+id, { method:'DELETE' }); loadMensajes(); loadStats(); } catch(e) { alert(e.message); }
 }
 async function marcarLeido(id, btn) {
   try { await api('/admin/mensajes/'+id+'/leido', { method:'PUT' }); btn.closest('.msg-card').classList.remove('unread'); btn.remove(); loadStats(); } catch(e) { alert(e.message); }
