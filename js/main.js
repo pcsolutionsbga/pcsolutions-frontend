@@ -233,57 +233,141 @@ async function checkout() {
 }
 
 /* ═══ PRODUCTOS (API) ═══ */
-async function loadProducts(categoria = 'todos') {
+const CAT_LABELS = { laptops: 'Portátiles', desktop: 'Computadores', gaming: 'Gaming', accesorios: 'Accesorios', insumos: 'Insumos' };
+const catLabel = (c) => CAT_LABELS[c] || (String(c).charAt(0).toUpperCase() + String(c).slice(1));
+let todosProductos = [];
+let filtroActual = 'todos';
+
+function imagenesDe(p) {
+  let extra = [];
+  try { extra = JSON.parse(p.imagenes || '[]'); } catch {}
+  return [p.imagen_url, ...(Array.isArray(extra) ? extra : [])].filter(Boolean).map(safeImg);
+}
+const esConsulta = (p) => Number(p.precio) <= 0;
+
+function renderFiltros() {
+  const cont = document.getElementById('filter-tabs');
+  const cats = [...new Set(todosProductos.map(p => p.categoria))];
+  cont.innerHTML = [['todos', 'Todos'], ...cats.map(c => [c, catLabel(c)])]
+    .map(([k, l]) => `<button class="filter-btn ${k === filtroActual ? 'active' : ''}" data-filter="${esc(k)}">${esc(l)}</button>`).join('');
+  cont.hidden = cats.length < 2;
+  const fp = document.getElementById('footer-products');
+  if (fp) fp.innerHTML = cats.map(c => `<li><a href="#productos" data-go-filter="${esc(c)}">${esc(catLabel(c))}</a></li>`).join('');
+}
+
+function renderProductos() {
+  const grid = document.getElementById('products-grid');
+  const lista = filtroActual === 'todos' ? todosProductos : todosProductos.filter(p => p.categoria === filtroActual);
+  if (!lista.length) {
+    grid.innerHTML = `<div class="loading-products">${icon('box','ico-lg')}<p>Por ahora no hay productos en esta categoría.</p></div>`;
+    return;
+  }
+  grid.innerHTML = lista.map(p => `
+    <article class="product-card glass" data-open="${Number(p.id)}" tabindex="0" aria-label="Ver ${esc(p.nombre)}">
+      <div class="product-img-wrap">
+        <img src="${esc(safeImg(p.imagen_url))}" alt="${esc(p.nombre)}" loading="lazy"/>
+        ${p.badge ? `<span class="product-badge ${p.badge==='Gaming'?'badge-red':p.badge==='Premium'?'badge-dark':''}">${esc(p.badge)}</span>` : ''}
+      </div>
+      <div class="product-info">
+        <p class="product-cat">${esc(catLabel(p.categoria))}</p>
+        <h3 class="product-name">${esc(p.nombre)}</h3>
+        <p class="product-specs">${esc(p.especificaciones || '')}</p>
+        <div class="product-footer">
+          <div>
+            ${esConsulta(p) ? '<p class="product-price ask">Precio a consultar</p>' : `<p class="product-price">${formatCOP(p.precio)}</p>`}
+            ${p.precio_antes ? `<p class="product-old-price">${formatCOP(p.precio_antes)}</p>` : ''}
+          </div>
+          ${esConsulta(p)
+            ? `<a class="btn-cart ask" data-ask="${Number(p.id)}" href="#" target="_blank" rel="noopener noreferrer" aria-label="Preguntar por ${esc(p.nombre)}">${icon('whatsapp','ico-fill')}</a>`
+            : `<button class="btn-cart" data-add="${Number(p.id)}" aria-label="Agregar ${esc(p.nombre)} al carrito">${icon('cart')}</button>`}
+        </div>
+      </div>
+    </article>`).join('');
+  grid.querySelectorAll('[data-ask]').forEach(a => { const p = productosById[a.dataset.ask]; a.href = waLink('Hola PC Solutions, quiero saber el precio de: ' + p.nombre); });
+  grid.querySelectorAll('.product-card').forEach((el, i) => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+    setTimeout(() => { el.style.transition = 'opacity .5s ease, transform .5s ease, border-color .3s, box-shadow .3s'; el.style.opacity = '1'; el.style.transform = 'none'; }, i * 90);
+  });
+}
+
+async function loadProducts() {
   const grid = document.getElementById('products-grid');
   if (!grid) return;
-  grid.innerHTML = '<div class="loading-products"><div class="loading-spinner"></div><p>Cargando productos...</p></div>';
-
   try {
-    const url = API + '/productos' + (categoria !== 'todos' ? '?categoria=' + encodeURIComponent(categoria) : '');
-    const res = await fetch(url);
+    const res = await fetch(API + '/productos');
     if (!res.ok) throw new Error('http');
-    const productos = await res.json();
-
-    if (!productos.length) {
-      grid.innerHTML = `<div class="loading-products">${icon('box','ico-lg')}<p>No hay productos en esta categoría por ahora.</p></div>`;
-      return;
-    }
-    productos.forEach(p => { productosById[p.id] = p; });
-
-    grid.innerHTML = productos.map(p => `
-      <div class="product-card" data-category="${esc(p.categoria)}">
-        <div class="product-img-wrap">
-          <img src="${esc(safeImg(p.imagen_url))}" alt="${esc(p.nombre)}" loading="lazy"/>
-          ${p.badge ? `<span class="product-badge ${p.badge==='Gaming'?'badge-red':p.badge==='Premium'?'badge-dark':''}">${esc(p.badge)}</span>` : ''}
-        </div>
-        <div class="product-info">
-          <p class="product-cat">${esc(p.categoria)}</p>
-          <h3 class="product-name">${esc(p.nombre)}</h3>
-          <p class="product-specs">${esc(p.especificaciones || '')}</p>
-          <div class="product-footer">
-            <div>
-              <p class="product-price">${formatCOP(p.precio)}</p>
-              ${p.precio_antes ? `<p class="product-old-price">${formatCOP(p.precio_antes)}</p>` : ''}
-            </div>
-            <button class="btn-cart" data-add="${Number(p.id)}" aria-label="Agregar ${esc(p.nombre)} al carrito">${icon('cart')}</button>
-          </div>
-        </div>
-      </div>`).join('');
-
-    grid.querySelectorAll('.product-card').forEach((el, i) => {
-      el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
-      setTimeout(() => { el.style.transition = 'all 0.4s ease'; el.style.opacity = '1'; el.style.transform = 'none'; }, i * 80);
-    });
+    todosProductos = await res.json();
+    todosProductos.forEach(p => { productosById[p.id] = p; });
+    renderFiltros();
+    renderProductos();
   } catch(e) {
     grid.innerHTML = `<div class="loading-products">${icon('alert','ico-lg')}<p>No pudimos cargar los productos. Revisa tu conexión e intenta de nuevo.</p></div>`;
   }
 }
 
+function setFilter(f) {
+  filtroActual = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+  renderProductos();
+}
+
+/* ═══ FICHA DE PRODUCTO ═══ */
+let modalProducto = null;
+function openProducto(id) {
+  const p = productosById[id]; if (!p) return;
+  modalProducto = p;
+  const imgs = imagenesDe(p);
+  const main = document.getElementById('pm-img');
+  main.src = imgs[0] || PLACEHOLDER_IMG; main.alt = p.nombre;
+  document.getElementById('pm-thumbs').innerHTML = imgs.length > 1
+    ? imgs.map((u, i) => `<button class="pm-thumb ${i===0?'active':''}" data-img="${esc(u)}" aria-label="Foto ${i+1}"><img src="${esc(u)}" alt=""/></button>`).join('') : '';
+  document.getElementById('pm-cat').textContent = catLabel(p.categoria);
+  document.getElementById('pm-name').textContent = p.nombre;
+  const pr = document.getElementById('pm-price');
+  pr.className = 'pm-price' + (esConsulta(p) ? ' ask' : '');
+  pr.textContent = esConsulta(p) ? 'Precio a consultar' : formatCOP(p.precio);
+  const sp = document.getElementById('pm-specs'); sp.textContent = p.especificaciones || ''; sp.hidden = !p.especificaciones;
+  document.getElementById('pm-desc').textContent = p.descripcion || '';
+  document.getElementById('pm-add').hidden = esConsulta(p);
+  document.getElementById('pm-wa').href = waLink('Hola PC Solutions, quiero información de: ' + p.nombre);
+  document.getElementById('pmodal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeProducto() {
+  document.getElementById('pmodal').classList.remove('open');
+  document.body.style.overflow = '';
+  modalProducto = null;
+}
+document.getElementById('pmodal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'pmodal' || e.target.closest('#pm-close')) return closeProducto();
+  const t = e.target.closest('.pm-thumb');
+  if (t) {
+    document.getElementById('pm-img').src = t.dataset.img;
+    document.querySelectorAll('.pm-thumb').forEach(x => x.classList.toggle('active', x === t));
+  }
+});
+document.getElementById('pm-add')?.addEventListener('click', () => {
+  if (!modalProducto) return;
+  const p = modalProducto; closeProducto();
+  addToCart({ id: Number(p.id), nombre: p.nombre, precio: Number(p.precio), imagen_url: p.imagen_url || '' });
+});
+
 document.getElementById('products-grid')?.addEventListener('click', (e) => {
-  const b = e.target.closest('[data-add]');
-  if (!b) return;
-  const p = productosById[b.dataset.add];
-  if (p) addToCart({ id: Number(p.id), nombre: p.nombre, precio: Number(p.precio), imagen_url: p.imagen_url || '' });
+  const add = e.target.closest('[data-add]');
+  if (add) {
+    e.stopPropagation();
+    const p = productosById[add.dataset.add];
+    if (p) addToCart({ id: Number(p.id), nombre: p.nombre, precio: Number(p.precio), imagen_url: p.imagen_url || '' });
+    return;
+  }
+  if (e.target.closest('[data-ask]')) return;
+  const card = e.target.closest('[data-open]');
+  if (card) openProducto(card.dataset.open);
+});
+document.getElementById('products-grid')?.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const card = e.target.closest('[data-open]');
+  if (card && e.target === card) openProducto(card.dataset.open);
 });
 
 /* ═══ SERVICIOS Y OPINIONES (API) ═══ */
@@ -296,8 +380,8 @@ async function loadServicios() {
     const items = await res.json();
     if (grid) grid.innerHTML = items.map(s => {
       const ic = ICONOS.includes(s.icono) ? s.icono : 'wrench';
-      const destino = s.destino === 'productos' ? '#productos' : '#contacto';
-      return `<div class="service-card reveal visible">
+      const destino = s.destino === 'productos' ? '#productos' : s.destino === 'desarrollo' ? '#desarrollo' : '#contacto';
+      return `<div class="service-card glass reveal visible">
         <div class="service-icon">${icon(ic)}</div>
         <h3>${esc(s.titulo)}</h3>
         <p>${esc(s.descripcion)}</p>
@@ -310,28 +394,90 @@ async function loadServicios() {
   }
 }
 
+async function loadProyectos() {
+  const sec = document.getElementById('desarrollo');
+  const grid = document.getElementById('projects-grid');
+  const links = ['nav-desarrollo', 'mob-desarrollo'].map(i => document.getElementById(i));
+  try {
+    const res = await fetch(API + '/proyectos');
+    const items = res.ok ? await res.json() : [];
+    if (!items.length) { sec.hidden = true; links.forEach(l => l.hidden = true); return; }
+    grid.innerHTML = items.map(p => {
+      const url = safeHttps(p.enlace);
+      const img = p.imagen ? safeImg(p.imagen) : '';
+      return `<article class="project-card glass reveal visible">
+        ${img ? `<img class="project-img" src="${esc(img)}" alt="${esc(p.titulo)}" loading="lazy"/>` : ''}
+        ${p.etiqueta ? `<span class="project-tag">${esc(p.etiqueta)}</span>` : ''}
+        <h3>${esc(p.titulo)}</h3>
+        <p>${esc(p.descripcion)}</p>
+        ${p.tecnologias ? `<p class="project-tech">${esc(p.tecnologias)}</p>` : ''}
+        ${url ? `<a class="project-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Ver proyecto ${icon('link')}</a>` : ''}
+      </article>`;
+    }).join('');
+    sec.hidden = false; links.forEach(l => l.hidden = false);
+  } catch (e) { sec.hidden = true; links.forEach(l => l.hidden = true); }
+}
+
 async function loadTestimonios() {
   const sec = document.getElementById('testimonios');
   const nav = document.getElementById('nav-testimonios');
   const grid = document.getElementById('testimonials-grid');
+  const gbox = document.getElementById('google-box');
+  const estrellas = (n) => '★'.repeat(Math.min(5, Math.max(1, Math.round(Number(n)) || 5)));
+  let propias = [], g = { activo: false };
   try {
-    const res = await fetch(API + '/testimonios');
-    const items = res.ok ? await res.json() : [];
-    if (!items.length) { sec.hidden = true; nav.hidden = true; return; }
-    grid.innerHTML = items.map(t => `
-      <div class="testimonial-card reveal visible">
-        <div class="stars" aria-label="${Number(t.estrellas)} de 5 estrellas">${'★'.repeat(Math.min(5, Math.max(1, Number(t.estrellas) || 5)))}</div>
-        <p class="testimonial-text">“${esc(t.texto)}”</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">${esc(initials(t.nombre))}</div>
-          <div>
-            <p class="author-name">${esc(t.nombre)}</p>
-            ${t.cargo ? `<p class="author-role">${esc(t.cargo)}</p>` : ''}
-          </div>
+    const [r1, r2] = await Promise.all([
+      fetch(API + '/testimonios').then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(API + '/resenas-google').then(r => r.ok ? r.json() : { activo: false }).catch(() => ({ activo: false }))
+    ]);
+    propias = r1; g = r2 || { activo: false };
+  } catch {}
+
+  const urlResenas = safeHttps(g.url) || safeHttps(CFG.google_resenas_url) || '';
+  const placeId = /^[A-Za-z0-9_-]{10,80}$/.test(CFG.google_place_id || '') ? CFG.google_place_id : '';
+  const urlEscribir = placeId ? 'https://search.google.com/local/writereview?placeid=' + placeId : urlResenas;
+
+  // Resumen de Google (calificación real) + botones
+  let html = '';
+  if (g.activo && g.rating) {
+    html += `<div class="g-score"><span class="g-num">${esc(String(g.rating).replace('.', ','))}</span>
+      <div><div class="stars">${estrellas(g.rating)}</div><div class="g-count">${Number(g.total)} reseñas en Google</div></div></div>`;
+  }
+  if (urlResenas || urlEscribir) {
+    html += `<div class="g-actions">
+      ${urlResenas ? `<a class="btn-outline" href="${esc(urlResenas)}" target="_blank" rel="noopener noreferrer">Ver reseñas en Google ${icon('link')}</a>` : ''}
+      ${urlEscribir ? `<a class="btn-primary" href="${esc(urlEscribir)}" target="_blank" rel="noopener noreferrer">Dejar una reseña</a>` : ''}
+    </div>`;
+  }
+  gbox.innerHTML = html; gbox.hidden = !html;
+
+  const tarjetasG = (g.activo ? g.resenas : []).map(t => `
+    <div class="testimonial-card glass reveal visible">
+      <div class="stars" aria-label="${Number(t.estrellas)} de 5 estrellas">${estrellas(t.estrellas)}</div>
+      <p class="testimonial-text">“${esc(t.texto)}”</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">${esc(initials(t.autor))}</div>
+        <div>
+          <p class="author-name">${safeHttps(t.enlace) ? `<a href="${esc(t.enlace)}" target="_blank" rel="noopener noreferrer">${esc(t.autor)}</a>` : esc(t.autor)}</p>
+          <p class="author-role">Reseña de Google${t.cuando ? ' · ' + esc(t.cuando) : ''}</p>
         </div>
-      </div>`).join('');
-    sec.hidden = false; nav.hidden = false;
-  } catch (e) { sec.hidden = true; nav.hidden = true; }
+      </div>
+    </div>`).join('');
+  const tarjetasP = propias.map(t => `
+    <div class="testimonial-card glass reveal visible">
+      <div class="stars" aria-label="${Number(t.estrellas)} de 5 estrellas">${estrellas(t.estrellas)}</div>
+      <p class="testimonial-text">“${esc(t.texto)}”</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">${esc(initials(t.nombre))}</div>
+        <div>
+          <p class="author-name">${esc(t.nombre)}</p>
+          ${t.cargo ? `<p class="author-role">${esc(t.cargo)}</p>` : ''}
+        </div>
+      </div>
+    </div>`).join('');
+  grid.innerHTML = tarjetasG + tarjetasP;
+  const visible = !!(html || tarjetasG || tarjetasP);
+  sec.hidden = !visible; nav.hidden = !visible;
 }
 
 /* ═══ CONFIG DEL SITIO (API) ═══ */
@@ -371,7 +517,8 @@ function applyConfig(cfg) {
 
   // Marcas
   const marcas = String(cfg.marcas || '').split(',').map(m => m.trim()).filter(Boolean).slice(0, 16);
-  document.getElementById('brands-grid').innerHTML = marcas.map(m => `<div class="brand-item">${esc(m)}</div>`).join('');
+  const marcasHtml = marcas.map(m => `<div class="brand-item">${esc(m)}</div>`).join('');
+  document.getElementById('brands-grid').innerHTML = marcasHtml + marcasHtml + marcasHtml + marcasHtml;
   document.getElementById('brands').hidden = marcas.length === 0;
 
   // Quiénes somos
@@ -472,15 +619,13 @@ document.querySelectorAll('.mob-link, .mob-cta').forEach(l => l.addEventListener
   hamburger?.classList.remove('open'); mobileMenu?.classList.remove('open');
 }));
 
-/* ═══ FILTROS DE PRODUCTOS ═══ */
-const ALLOWED_FILTERS = new Set(['todos','laptops','desktop','gaming','accesorios']);
-function setFilter(f) {
-  if (!ALLOWED_FILTERS.has(f)) return;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
-  loadProducts(f);
-}
-document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => setFilter(btn.dataset.filter)));
-document.querySelectorAll('[data-go-filter]').forEach(a => a.addEventListener('click', () => setFilter(a.dataset.goFilter)));
+/* ═══ FILTROS (los botones se generan con las categorías de tus productos) ═══ */
+document.getElementById('filter-tabs')?.addEventListener('click', (e) => {
+  const b = e.target.closest('.filter-btn'); if (b) setFilter(b.dataset.filter);
+});
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('[data-go-filter]'); if (a) setFilter(a.dataset.goFilter);
+});
 
 /* ═══ CARRITO — eventos ═══ */
 document.getElementById('cart-btn-float')?.addEventListener('click', openCart);
@@ -488,7 +633,7 @@ document.getElementById('cart-close')?.addEventListener('click', closeCart);
 document.getElementById('cart-overlay')?.addEventListener('click', closeCart);
 document.getElementById('btn-checkout')?.addEventListener('click', checkout);
 document.getElementById('btn-clear-cart')?.addEventListener('click', () => { if (confirm('¿Vaciar el carrito?')) clearCart(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCart(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeCart(); closeProducto(); } });
 
 /* ═══ FORMULARIO DE CONTACTO ═══ */
 const contactForm = document.getElementById('contact-form');
@@ -568,17 +713,77 @@ document.addEventListener('click', (e) => {
   if (!h || h === '#' || !/^#[a-z]+$/.test(h)) return;
   const t = document.querySelector(h);
   if (t && !t.hidden) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  else if (h === '#desarrollo') { e.preventDefault(); document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' }); }
 });
+
+/* ═══ EFECTOS VISUALES ═══ */
+const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Barra de progreso de lectura
+const barra = document.getElementById('scroll-progress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - innerHeight;
+  if (barra && h > 0) barra.style.width = (scrollY / h * 100) + '%';
+}, { passive: true });
+
+// El brillo de las tarjetas sigue al cursor
+document.addEventListener('pointermove', (e) => {
+  const c = e.target.closest && e.target.closest('.glass');
+  if (!c) return;
+  const r = c.getBoundingClientRect();
+  c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+  c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+}, { passive: true });
+
+// Red de partículas del inicio
+function iniciarParticulas() {
+  const cv = document.getElementById('hero-canvas');
+  if (!cv || reducido) return;
+  const ctx = cv.getContext('2d');
+  let w, h, pts = [], vivo = true;
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  function medir() {
+    const r = cv.getBoundingClientRect(); w = r.width; h = r.height;
+    cv.width = w * dpr; cv.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.min(90, Math.floor(w * h / 14000));
+    pts = Array.from({ length: n }, () => ({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35 }));
+  }
+  const mouse = { x: -999, y: -999 };
+  cv.parentElement.addEventListener('pointermove', (e) => { const r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; });
+  cv.parentElement.addEventListener('pointerleave', () => { mouse.x = mouse.y = -999; });
+  function frame() {
+    if (!vivo) return;
+    ctx.clearRect(0, 0, w, h);
+    for (const p of pts) {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > w) p.vx *= -1; if (p.y < 0 || p.y > h) p.vy *= -1;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1.6, 0, 6.283); ctx.fillStyle = 'rgba(44,255,154,0.85)'; ctx.fill();
+    }
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = dx * dx + dy * dy;
+        if (d < 14000) { ctx.strokeStyle = `rgba(34,211,238,${(1 - d / 14000) * 0.35})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke(); }
+      }
+      const mx = pts[i].x - mouse.x, my = pts[i].y - mouse.y, md = mx * mx + my * my;
+      if (md < 22000) { ctx.strokeStyle = `rgba(44,255,154,${(1 - md / 22000) * 0.6})`; ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke(); }
+    }
+    requestAnimationFrame(frame);
+  }
+  medir(); frame();
+  addEventListener('resize', medir);
+  new IntersectionObserver(([en]) => { const v = en.isIntersecting; if (v && !vivo) { vivo = true; frame(); } else if (!v) vivo = false; }).observe(cv);
+}
 
 /* ═══ INICIALIZAR ═══ */
 document.addEventListener('DOMContentLoaded', () => {
   renderCart();
-  loadConfig();
+  loadConfig().then(loadTestimonios);
   loadProducts();
   loadServicios();
-  loadTestimonios();
+  loadProyectos();
+  iniciarParticulas();
   const ro = new IntersectionObserver((entries) => {
     entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('visible'); ro.unobserve(en.target); } });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.contact-item, .hero-stats').forEach(el => { el.classList.add('reveal'); ro.observe(el); });
+  document.querySelectorAll('.contact-item, .hero-stats, .section-header').forEach(el => { el.classList.add('reveal'); ro.observe(el); });
 });

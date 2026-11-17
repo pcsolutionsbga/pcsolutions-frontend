@@ -22,10 +22,10 @@
   <meta name="theme-color" content="#0a0a0a" />
 
   <!-- SEO -->
-  <title>PC SOLUTIONS® — Computadores y soporte técnico en Bucaramanga</title>
-  <meta name="description" content="PC SOLUTIONS®: venta de computadores, portátiles y accesorios, soporte técnico y ensamble a la medida en San Francisco, Bucaramanga." />
+  <title>PC SOLUTIONS® — Tecnología y desarrollo de software en Bucaramanga</title>
+  <meta name="description" content="PC SOLUTIONS®: venta de computadores y accesorios, soporte técnico, ensamble a la medida y desarrollo de software en San Francisco, Bucaramanga." />
   <meta name="keywords" content="computadores Bucaramanga, portátiles, soporte técnico, reparación de computadores, ensamble de PC, San Francisco Bucaramanga" />
-  <meta property="og:title" content="PC SOLUTIONS® — Computadores y soporte técnico en Bucaramanga" />
+  <meta property="og:title" content="PC SOLUTIONS® — Tecnología y desarrollo de software en Bucaramanga" />
   <meta property="og:description" content="Venta de equipos, soporte técnico y ensamble a la medida. Atención en San Francisco, Bucaramanga." />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="es_CO" />
@@ -39,10 +39,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/site.css" />
 </head>
 <body>
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
 
   <!-- Íconos del sitio (se reutilizan con <use>) -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -65,6 +66,8 @@
       <symbol id="i-check" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
       <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></symbol>
       <symbol id="i-send" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
+      <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
       <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></symbol>
       <symbol id="i-facebook" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></symbol>
       <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></symbol>
@@ -82,6 +85,7 @@
         <a href="#nosotros" id="nav-nosotros" hidden>Nosotros</a>
         <a href="#productos">Productos</a>
         <a href="#servicios">Servicios</a>
+        <a href="#desarrollo" id="nav-desarrollo" hidden>Desarrollo</a>
         <a href="#testimonios" id="nav-testimonios" hidden>Opiniones</a>
         <a href="#contacto">Contacto</a>
       </nav>
@@ -94,6 +98,7 @@
       <a href="#inicio" class="mob-link">Inicio</a>
       <a href="#productos" class="mob-link">Productos</a>
       <a href="#servicios" class="mob-link">Servicios</a>
+      <a href="#desarrollo" class="mob-link" id="mob-desarrollo" hidden>Desarrollo</a>
       <a href="#contacto" class="mob-link">Contacto</a>
       <a href="#contacto" class="btn-nav mob-cta">Cotizar ahora</a>
     </div>
@@ -102,8 +107,10 @@
   <main>
   <!-- ============ HERO ============ -->
   <section id="inicio" class="hero">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
     <div class="hero-bg-grid"></div>
-    <div class="container hero-content">
+    <div class="container hero-wrap">
+     <div class="hero-content">
       <div class="hero-badge" id="hero-badge-wrap" hidden>
         <svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>
         <span data-cfg="hero_badge"></span>
@@ -120,6 +127,14 @@
         <a href="#contacto" class="btn-outline">Hablar con un asesor</a>
       </div>
       <div class="hero-stats" id="hero-stats" hidden></div>
+     </div>
+     <div class="hero-visual" aria-hidden="true">
+       <div class="orb">
+         <span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span>
+         <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span>
+         <div class="core"><svg class="ico"><use href="#i-cpu"/></svg></div>
+       </div>
+     </div>
     </div>
     <div class="hero-scroll-hint">
       <span>Scroll</span>
@@ -131,7 +146,7 @@
   <section class="brands" id="brands" hidden>
     <div class="container">
       <p class="brands-label">Marcas con las que trabajamos</p>
-      <div class="brands-grid" id="brands-grid"></div>
+      <div class="marquee"><div class="brands-grid" id="brands-grid"></div></div>
     </div>
   </section>
 
@@ -156,13 +171,7 @@
         <p class="section-sub">Equipos seleccionados con la mejor relación calidad-precio</p>
       </div>
 
-      <div class="filter-tabs" id="filter-tabs">
-        <button class="filter-btn active" data-filter="todos">Todos</button>
-        <button class="filter-btn" data-filter="laptops">Portátiles</button>
-        <button class="filter-btn" data-filter="desktop">Computadores</button>
-        <button class="filter-btn" data-filter="gaming">Gaming</button>
-        <button class="filter-btn" data-filter="accesorios">Accesorios</button>
-      </div>
+      <div class="filter-tabs" id="filter-tabs"></div>
 
       <div class="products-grid" id="products-grid">
         <div class="loading-products">
@@ -203,6 +212,32 @@
     </div>
   </section>
 
+  <!-- ============ DESARROLLO A LA MEDIDA (aparece si hay trabajos cargados) ============ -->
+  <section id="desarrollo" class="dev" hidden>
+    <div class="container">
+      <div class="dev-top">
+        <div>
+          <p class="section-tag">Software</p>
+          <h2 class="section-title" data-cfg="dev_titulo">Desarrollo de software a la medida</h2>
+          <p class="section-sub" data-cfg="dev_texto"></p>
+          <a href="#" class="btn-primary" data-wa data-wa-msg="Hola PC Solutions, quiero cotizar un desarrollo de software a la medida" target="_blank" rel="noopener noreferrer">
+            <svg class="ico ico-fill" width="20" height="20" aria-hidden="true"><use href="#i-whatsapp"/></svg> Cotizar mi proyecto
+          </a>
+        </div>
+        <div class="terminal" aria-hidden="true">
+          <div class="terminal-bar"><i></i><i></i><i></i><span>pcsolutions — nuevo-proyecto</span></div>
+          <pre><span class="k">const</span> proyecto = {
+  tipo:   <span class="s">"tienda en línea | sistema | web"</span>,
+  hecho:  <span class="s">"a la medida de tu negocio"</span>,
+  estado: <span class="s">"en línea y funcionando"</span>
+};
+<span class="c">$</span> publicar(proyecto)<span class="cursor"></span></pre>
+        </div>
+      </div>
+      <div class="projects-grid" id="projects-grid"></div>
+    </div>
+  </section>
+
   <!-- ============ OPINIONES (solo aparece si hay opiniones cargadas) ============ -->
   <section id="testimonios" class="testimonials" hidden>
     <div class="container">
@@ -210,6 +245,7 @@
         <p class="section-tag">Lo que dicen nuestros clientes</p>
         <h2 class="section-title">Opiniones</h2>
       </div>
+      <div class="google-box" id="google-box" hidden></div>
       <div class="testimonials-grid" id="testimonials-grid"></div>
     </div>
   </section>
@@ -302,6 +338,7 @@
               <option value="soporte">Soporte técnico</option>
               <option value="ensamble">Ensamble personalizado</option>
               <option value="red">Redes y configuración</option>
+              <option value="desarrollo">Desarrollo de software a la medida</option>
               <option value="otro">Otro</option>
             </select>
           </div>
@@ -356,12 +393,7 @@
 
       <div class="footer-links">
         <h4>Productos</h4>
-        <ul>
-          <li><a href="#productos" data-go-filter="laptops">Portátiles</a></li>
-          <li><a href="#productos" data-go-filter="desktop">Computadores</a></li>
-          <li><a href="#productos" data-go-filter="gaming">Gaming</a></li>
-          <li><a href="#productos" data-go-filter="accesorios">Accesorios</a></li>
-        </ul>
+        <ul id="footer-products"></ul>
       </div>
 
       <div class="footer-links">
@@ -390,6 +422,29 @@
       </div>
     </div>
   </footer>
+
+  <!-- Ficha de producto -->
+  <div class="pmodal" id="pmodal" role="dialog" aria-modal="true" aria-labelledby="pm-name">
+    <div class="pm-box">
+      <button class="pm-close" id="pm-close" aria-label="Cerrar"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg></button>
+      <div class="pm-gallery">
+        <div class="pm-main"><img id="pm-img" alt="" /></div>
+        <div class="pm-thumbs" id="pm-thumbs"></div>
+      </div>
+      <div class="pm-info">
+        <p class="product-cat" id="pm-cat"></p>
+        <h3 class="product-name" id="pm-name"></h3>
+        <div class="pm-price" id="pm-price"></div>
+        <div class="pm-specs" id="pm-specs"></div>
+        <div class="pm-desc" id="pm-desc"></div>
+        <div class="pm-actions">
+          <button class="btn-primary" id="pm-add"><svg class="ico" width="20" height="20" aria-hidden="true"><use href="#i-cart"/></svg> Agregar al carrito</button>
+          <a class="btn-outline" id="pm-wa" href="#" target="_blank" rel="noopener noreferrer"><svg class="ico ico-fill" width="20" height="20" aria-hidden="true"><use href="#i-whatsapp"/></svg> Preguntar por este producto</a>
+        </div>
+        <p class="pm-note">Las imágenes son de referencia.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- Botón flotante de WhatsApp -->
   <a href="#" data-wa data-wa-msg="Hola PC Solutions, necesito información" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Escribir por WhatsApp">

@@ -37,6 +37,7 @@
       <button class="admin-nav-item" data-section="pedidos">🛒 Pedidos</button>
       <button class="admin-nav-item" data-section="mensajes">✉️ Mensajes</button>
       <button class="admin-nav-item" data-section="servicios">🛠 Servicios</button>
+      <button class="admin-nav-item" data-section="proyectos">💻 Proyectos (desarrollo)</button>
       <button class="admin-nav-item" data-section="testimonios">⭐ Opiniones</button>
       <button class="admin-nav-item" data-section="config">⚙️ Contenido del sitio</button>
       <button class="admin-nav-item" data-section="password">🔑 Contraseña</button>
@@ -134,13 +135,26 @@
       </div></div>
     </section>
 
+    <!-- PROYECTOS -->
+    <section id="sec-proyectos" style="display:none">
+      <div class="admin-topbar">
+        <h1 class="admin-title">Proyectos de desarrollo</h1>
+        <button class="btn-admin-primary" onclick="openProyecto()">+ Agregar proyecto</button>
+      </div>
+      <p style="color:#9ca3af;font-size:.85rem;margin-bottom:1rem">Son los trabajos de referencia de la sección “Desarrollo a la medida”. Si no hay ninguno visible, la sección no aparece en el sitio.</p>
+      <div class="admin-table-wrap"><div style="overflow-x:auto">
+        <table class="admin-table"><thead><tr><th>Orden</th><th>Proyecto</th><th>Descripción</th><th>Tecnologías</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="proyectos-tbody"></tbody></table>
+      </div></div>
+    </section>
+
     <!-- OPINIONES -->
     <section id="sec-testimonios" style="display:none">
       <div class="admin-topbar">
         <h1 class="admin-title">Opiniones de clientes</h1>
         <button class="btn-admin-primary" onclick="openTestimonio()">+ Agregar opinión</button>
       </div>
-      <p style="color:#9ca3af;font-size:.85rem;margin-bottom:1rem">La sección “Opiniones” solo aparece en el sitio cuando hay al menos una opinión activa. Agrega solo opiniones reales de tus clientes, con su permiso.</p>
+      <p style="color:#9ca3af;font-size:.85rem;margin-bottom:1rem">La sección “Opiniones” aparece cuando hay reseñas de Google conectadas o al menos una opinión tuya activa. Las reseñas de Google se traen solas (se configuran en “Contenido del sitio” → Reseñas de Google). Aquí agrega solo opiniones reales, con permiso del cliente.</p>
       <div class="admin-table-wrap"><div style="overflow-x:auto">
         <table class="admin-table"><thead><tr><th>Orden</th><th>Cliente</th><th>Opinión</th><th>Estrellas</th><th>Estado</th><th>Acciones</th></tr></thead>
         <tbody id="testimonios-tbody"></tbody></table>
@@ -180,7 +194,7 @@
     <h3 class="modal-title" id="modal-title">Agregar producto</h3>
     <div class="modal-grid">
       <div class="modal-form-group full"><label>Nombre del producto *</label><input type="text" id="pm-nombre" placeholder="Ej: Portátil Profesional 15&quot;"/></div>
-      <div class="modal-form-group"><label>Precio (COP) *</label><input type="number" id="pm-precio" placeholder="3200000"/></div>
+      <div class="modal-form-group"><label>Precio (COP) * — 0 = “precio a consultar”</label><input type="number" id="pm-precio" placeholder="3200000" min="0"/></div>
       <div class="modal-form-group"><label>Precio anterior (tachado)</label><input type="number" id="pm-precio-antes" placeholder="3800000"/></div>
       <div class="modal-form-group"><label>Categoría *</label>
         <select id="pm-categoria">
@@ -188,11 +202,13 @@
           <option value="desktop">Escritorio</option>
           <option value="gaming">Gaming</option>
           <option value="accesorios">Accesorios</option>
+          <option value="insumos">Insumos (tóner, tintas…)</option>
         </select>
       </div>
       <div class="modal-form-group"><label>Stock</label><input type="number" id="pm-stock" placeholder="0"/></div>
       <div class="modal-form-group full"><label>Especificaciones</label><input type="text" id="pm-specs" placeholder="Core i7 | 16GB RAM | 512GB SSD | Win 11"/></div>
       <div class="modal-form-group full"><label>Imagen (enlace https:// o ruta img/…)</label><input type="url" id="pm-imagen" placeholder="https://… o img/mi-foto.jpg"/></div>
+      <div class="modal-form-group full"><label>Fotos adicionales (una por línea, máx. 8)</label><textarea id="pm-imagenes" rows="3" placeholder="img/productos/foto2.jpg"></textarea></div>
       <div class="modal-form-group full"><label>Descripción</label><textarea id="pm-desc" rows="2" placeholder="Descripción breve del producto"></textarea></div>
       <div class="modal-form-group"><label>Badge / etiqueta</label><input type="text" id="pm-badge" placeholder="Más vendido, Gaming, Premium..."/></div>
       <div class="modal-form-group"><label>Estado</label>
@@ -212,7 +228,7 @@ const API = window.location.hostname === 'localhost' ? 'http://localhost:3001/ap
 let token = null;
 try { token = localStorage.getItem('pcs_admin_token'); } catch {}
 let editingProductId = null;
-const cache = { productos: [], pedidos: [], servicios: [], testimonios: [] };
+const cache = { productos: [], pedidos: [], servicios: [], testimonios: [], proyectos: [] };
 
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function formatCOP(n) { return '$' + Number(n).toLocaleString('es-CO'); }
@@ -260,14 +276,14 @@ $('login-pass').addEventListener('keydown', e => { if (e.key==='Enter') $('login
 $('admin-logout').addEventListener('click', logout);
 
 /* ═══ NAVEGACIÓN ═══ */
-const sections = ['dashboard','productos','pedidos','mensajes','servicios','testimonios','config','password'];
+const sections = ['dashboard','productos','pedidos','mensajes','servicios','proyectos','testimonios','config','password'];
 document.querySelectorAll('.admin-nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const sec = btn.dataset.section;
     document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     sections.forEach(s => $('sec-'+s).style.display = s===sec?'block':'none');
-    ({ productos: loadProductos, pedidos: loadPedidos, mensajes: loadMensajes, servicios: loadServicios,
+    ({ productos: loadProductos, pedidos: loadPedidos, mensajes: loadMensajes, servicios: loadServicios, proyectos: loadProyectos,
        testimonios: loadTestimonios, config: loadConfig, dashboard: loadStats }[sec] || (()=>{}))();
   });
 });
@@ -289,10 +305,10 @@ async function loadProductos() {
     $('prod-count').textContent = productos.length + ' productos';
     $('productos-tbody').innerHTML = productos.map(p => `
       <tr>
-        <td><img src="${esc(p.imagen_url)}" alt="" onerror="this.style.display='none'"/></td>
+        <td><img src="${esc(/^img\//.test(p.imagen_url) ? '../' + p.imagen_url : p.imagen_url)}" alt="" onerror="this.style.display='none'"/></td>
         <td><strong style="color:#fff">${esc(p.nombre)}</strong><br/><span style="font-size:.75rem;color:#6b7280">${esc(p.especificaciones)}</span></td>
         <td><span class="admin-badge">${esc(p.categoria)}</span></td>
-        <td style="color:#22c55e;font-weight:700">${formatCOP(p.precio)}</td>
+        <td style="color:#22c55e;font-weight:700">${Number(p.precio) > 0 ? formatCOP(p.precio) : 'A consultar'}</td>
         <td>${Number(p.stock)||0}</td>
         <td><span class="badge-estado ${p.activo?'badge-activo':'badge-inactivo'}">${p.activo?'Activo':'Inactivo'}</span></td>
         <td style="white-space:nowrap">
@@ -307,7 +323,9 @@ function openProductModal(id) {
   const p = id ? cache.productos.find(x => Number(x.id) === Number(id)) : null;
   editingProductId = p ? p.id : null;
   $('modal-title').textContent = p ? '✏️ Editar producto' : '+ Agregar producto';
-  $('pm-nombre').value = p?.nombre || ''; $('pm-precio').value = p?.precio || '';
+  let extra = []; try { extra = JSON.parse(p?.imagenes || '[]'); } catch {}
+  $('pm-imagenes').value = extra.join('\n');
+  $('pm-nombre').value = p?.nombre || ''; $('pm-precio').value = p ? p.precio : '';
   $('pm-precio-antes').value = p?.precio_antes || ''; $('pm-categoria').value = p?.categoria || 'laptops';
   $('pm-stock').value = p?.stock || 0; $('pm-specs').value = p?.especificaciones || '';
   $('pm-imagen').value = p?.imagen_url || ''; $('pm-desc').value = p?.descripcion || '';
@@ -322,8 +340,9 @@ $('btn-save-product').addEventListener('click', async () => {
     categoria: $('pm-categoria').value, stock: $('pm-stock').value, especificaciones: $('pm-specs').value.trim(),
     imagen_url: $('pm-imagen').value.trim(), descripcion: $('pm-desc').value.trim(),
     badge: $('pm-badge').value.trim(), activo: $('pm-activo').value,
+    imagenes: $('pm-imagenes').value.split('\n').map(x => x.trim()).filter(Boolean),
   };
-  if (!body.nombre || !body.precio) { alert('Nombre y precio son obligatorios'); return; }
+  if (!body.nombre || body.precio === '') { alert('Nombre y precio son obligatorios (precio 0 = a consultar)'); return; }
   try {
     await api(editingProductId ? '/admin/productos/'+editingProductId : '/admin/productos', { method: editingProductId ? 'PUT' : 'POST', body: JSON.stringify(body) });
     closeProductModal(); loadProductos(); loadStats();
@@ -411,13 +430,13 @@ function openForm(titulo, fields, values, onSave) {
 }
 
 /* ═══ SERVICIOS ═══ */
-const ICONOS = [['wrench','Herramienta (soporte)'],['laptop','Portátil'],['cpu','Procesador (ensamble)'],['network','Redes / WiFi'],['shield','Seguridad'],['box','Caja (repuestos)'],['monitor','Monitor'],['phone','Teléfono']];
+const ICONOS = [['wrench','Herramienta (soporte)'],['laptop','Portátil'],['cpu','Procesador (ensamble)'],['network','Redes / WiFi'],['shield','Seguridad'],['box','Caja (repuestos)'],['monitor','Monitor'],['phone','Teléfono'],['code','Código (desarrollo de software)']];
 const SERV_FIELDS = [
   { k:'titulo', label:'Título *', full:true, max:80 },
   { k:'descripcion', label:'Descripción', type:'textarea', full:true, max:300 },
   { k:'icono', label:'Ícono', type:'select', options: ICONOS, def:'wrench' },
   { k:'boton_texto', label:'Texto del botón', def:'Solicitar', max:30 },
-  { k:'destino', label:'El botón lleva a', type:'select', options:[['contacto','Formulario de contacto'],['productos','Catálogo de productos']], def:'contacto' },
+  { k:'destino', label:'El botón lleva a', type:'select', options:[['contacto','Formulario de contacto'],['productos','Catálogo de productos'],['desarrollo','Sección de proyectos de desarrollo']], def:'contacto' },
   { k:'orden', label:'Orden (1 = primero)', type:'number', def:0 },
   { k:'activo', label:'Estado', type:'select', options:[['1','Visible'],['0','Oculto']], def:'1' },
 ];
@@ -439,6 +458,38 @@ function openServicio(id) {
   openForm(s ? 'Editar servicio' : 'Agregar servicio', SERV_FIELDS, s ? { ...s, activo: String(s.activo) } : null, async (body) => {
     await api(s ? '/admin/servicios/'+s.id : '/admin/servicios', { method: s ? 'PUT' : 'POST', body: JSON.stringify(body) });
     loadServicios();
+  });
+}
+
+/* ═══ PROYECTOS ═══ */
+const PROY_FIELDS = [
+  { k:'titulo', label:'Nombre del proyecto *', full:true, max:80 },
+  { k:'etiqueta', label:'Etiqueta (ej: Tienda en línea)', max:60 },
+  { k:'tecnologias', label:'Tecnologías (separadas por ·)', max:120 },
+  { k:'descripcion', label:'Descripción', type:'textarea', full:true, max:500 },
+  { k:'enlace', label:'Enlace para verlo (https://, opcional)', full:true, max:300 },
+  { k:'imagen', label:'Imagen (https:// o img/…, opcional)', full:true, max:300 },
+  { k:'orden', label:'Orden (1 = primero)', type:'number', def:0 },
+  { k:'activo', label:'Estado', type:'select', options:[['1','Visible'],['0','Oculto']], def:'1' },
+];
+async function loadProyectos() {
+  try {
+    const items = cache.proyectos = await api('/admin/proyectos');
+    $('proyectos-tbody').innerHTML = items.map(s => `<tr>
+      <td>${Number(s.orden)}</td><td><strong style="color:#fff">${esc(s.titulo)}</strong><br/><span style="font-size:.75rem;color:#6b7280">${esc(s.etiqueta)}</span></td>
+      <td style="max-width:320px;color:#9ca3af;font-size:.85rem">${esc(s.descripcion)}</td>
+      <td style="font-size:.8rem">${esc(s.tecnologias)}</td>
+      <td><span class="badge-estado ${s.activo?'badge-activo':'badge-inactivo'}">${s.activo?'Visible':'Oculto'}</span></td>
+      <td style="white-space:nowrap"><button class="btn-admin-sm btn-edit" onclick="openProyecto(${Number(s.id)})">✏️ Editar</button>
+      <button class="btn-admin-sm btn-delete" style="margin-left:4px" onclick="delItem('proyectos',${Number(s.id)})">🗑 Borrar</button></td></tr>`).join('')
+      || '<tr><td colspan="6" style="text-align:center;color:#6b7280;padding:2rem">No hay proyectos</td></tr>';
+  } catch(e) { alert(e.message); }
+}
+function openProyecto(id) {
+  const s = id ? cache.proyectos.find(x => Number(x.id) === Number(id)) : null;
+  openForm(s ? 'Editar proyecto' : 'Agregar proyecto', PROY_FIELDS, s ? { ...s, activo: String(s.activo) } : null, async (body) => {
+    await api(s ? '/admin/proyectos/'+s.id : '/admin/proyectos', { method: s ? 'PUT' : 'POST', body: JSON.stringify(body) });
+    loadProyectos();
   });
 }
 
@@ -472,7 +523,7 @@ function openTestimonio(id) {
 }
 async function delItem(ruta, id) {
   if (!confirm('¿Eliminar este elemento? Esta acción no se puede deshacer.')) return;
-  try { await api('/admin/'+ruta+'/'+id, { method:'DELETE' }); ruta === 'servicios' ? loadServicios() : loadTestimonios(); } catch(e) { alert(e.message); }
+  try { await api('/admin/'+ruta+'/'+id, { method:'DELETE' }); ({ servicios: loadServicios, proyectos: loadProyectos, testimonios: loadTestimonios })[ruta](); } catch(e) { alert(e.message); }
 }
 
 /* ═══ CONTENIDO DEL SITIO ═══ */
@@ -496,6 +547,10 @@ const CONFIG_FIELDS = [
   ['📊 Cifras de la portada', 'stat2_label', 'Cifra 2 — descripción', 'text', ''],
   ['📊 Cifras de la portada', 'stat3_num', 'Cifra 3 — dato', 'text', ''],
   ['📊 Cifras de la portada', 'stat3_label', 'Cifra 3 — descripción', 'text', ''],
+  ['💻 Desarrollo a la medida', 'dev_titulo', 'Título de la sección', 'text', ''],
+  ['💻 Desarrollo a la medida', 'dev_texto', 'Texto de la sección', 'area', 'Los proyectos de referencia se editan en “Proyectos (desarrollo)”.'],
+  ['⭐ Reseñas de Google', 'google_resenas_url', 'Enlace a tus reseñas en Google', 'text', 'Botón “Ver reseñas en Google”. Funciona sin costo.'],
+  ['⭐ Reseñas de Google', 'google_place_id', 'Place ID de tu negocio (para traer reseñas automáticamente)', 'text', 'Código que empieza por ChIJ. Solo funciona si el servidor tiene la clave de Google configurada.'],
   ['🏷 Marcas', 'marcas', 'Marcas (separadas por coma)', 'text', 'Ej: DELL,HP,LENOVO. Vacío = no se muestra la franja.'],
   ['👥 Quiénes somos', 'about_titulo', 'Título', 'text', ''],
   ['👥 Quiénes somos', 'about_texto', 'Texto', 'area', 'Vacío = no se muestra la sección. Cada salto de línea es un párrafo nuevo.'],
