@@ -9,7 +9,7 @@ const API = window.location.hostname === 'localhost'
    viene de la API y se edita desde el panel de administración. */
 let CFG = {};
 const PLACEHOLDER_IMG = 'img/placeholder.svg';
-const ICONOS = ['wrench','laptop','cpu','network','shield','box','monitor','phone'];
+const ICONOS = ['wrench','laptop','cpu','network','shield','box','monitor','phone','code'];
 
 /* ═══ UTILIDADES ═══ */
 function esc(str) {
