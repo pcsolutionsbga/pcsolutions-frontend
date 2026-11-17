@@ -273,7 +273,7 @@ $('login-btn').addEventListener('click', async () => {
   } catch { errEl.textContent = 'Error de conexión con el servidor'; errEl.style.display='block'; }
 });
 $('login-pass').addEventListener('keydown', e => { if (e.key==='Enter') $('login-btn').click(); });
-$('admin-logout').addEventListener('click', logout);
+$('admin-logout').addEventListener('click', async () => { try { await api('/admin/logout', { method:'POST' }); } catch {} logout(); });
 
 /* ═══ NAVEGACIÓN ═══ */
 const sections = ['dashboard','productos','pedidos','mensajes','servicios','proyectos','testimonios','config','password'];
@@ -605,7 +605,8 @@ $('btn-change-pwd').addEventListener('click', async () => {
   if (nueva !== confirmar) return show('Las contraseñas no coinciden', '#f87171');
   if (nueva.length < 8) return show('La contraseña debe tener al menos 8 caracteres', '#f87171');
   try {
-    await api('/admin/password', { method:'PUT', body: JSON.stringify({ actual, nueva }) });
+    const resp = await api('/admin/password', { method:'PUT', body: JSON.stringify({ actual, nueva }) });
+    if (resp.token) { token = resp.token; try { localStorage.setItem('pcs_admin_token', token); } catch {} }
     show('✅ Contraseña cambiada exitosamente', '#22c55e');
     $('pwd-actual').value = $('pwd-nueva').value = $('pwd-confirmar').value = '';
   } catch(e) { show('❌ ' + e.message, '#f87171'); }
