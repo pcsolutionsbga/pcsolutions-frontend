@@ -430,3 +430,17 @@ textarea { resize: vertical; }
 .g-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 .g-actions .btn-primary, .g-actions .btn-outline { padding: 12px 24px; font-size: 0.92rem; }
 .author-name a:hover { color: var(--g); }
+
+/* Campos con error (coral, contrasta con el verde/cian/violeta) */
+.form-group.has-error input, .form-group.has-error textarea, .form-group.has-error select {
+  border-color: #ff4d6d; background: rgba(255,77,109,0.08); box-shadow: 0 0 0 3px rgba(255,77,109,0.25), 0 0 22px rgba(255,77,109,0.25);
+  animation: campoError .4s ease;
+}
+.form-group.has-error label { color: #ff8fa3; }
+.consent.has-error { padding: 10px 12px; border-radius: 12px; border: 1px solid #ff4d6d; background: rgba(255,77,109,0.08); box-shadow: 0 0 0 3px rgba(255,77,109,0.2); }
+.field-error { display: block; color: #ff8fa3; font-size: 0.8rem; font-weight: 600; margin-top: 4px; }
+.field-error::before { content: "▲ "; font-size: 0.7em; }
+.form-error { font-weight: 600; border-color: #ff4d6d; box-shadow: 0 0 20px rgba(255,77,109,0.2); }
+@keyframes campoError { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+@media (prefers-reduced-motion: reduce) { .form-group.has-error input, .form-group.has-error textarea { animation: none; } }
+.consent + .field-error { margin: -0.6rem 0 1rem 2px; }

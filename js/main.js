@@ -657,6 +657,31 @@ function formMsg(kind, text) {
   el.hidden = false;
 }
 
+function clearFieldErrors() {
+  contactForm.querySelectorAll('.has-error').forEach(g => g.classList.remove('has-error'));
+  contactForm.querySelectorAll('.field-error').forEach(n => n.remove());
+}
+function fieldError(id, texto) {
+  const el = document.getElementById(id);
+  const grupo = el.closest('.form-group') || el.closest('.consent');
+  grupo.classList.add('has-error');
+  const msg = document.createElement('span');
+  msg.className = 'field-error'; msg.setAttribute('role', 'alert');
+  msg.textContent = texto;
+  if (grupo.classList.contains('consent')) grupo.after(msg); else grupo.appendChild(msg);
+  return el;
+}
+contactForm?.addEventListener('input', (e) => {
+  const g = e.target.closest('.has-error'); if (!g) return;
+  g.classList.remove('has-error');
+  (g.classList.contains('consent') ? g.nextElementSibling : g.querySelector('.field-error'))?.matches?.('.field-error') && (g.classList.contains('consent') ? g.nextElementSibling : g.querySelector('.field-error')).remove();
+});
+contactForm?.addEventListener('change', (e) => {
+  const g = e.target.closest('.has-error'); if (!g) return;
+  g.classList.remove('has-error');
+  (g.classList.contains('consent') ? g.nextElementSibling : g.querySelector('.field-error'))?.matches?.('.field-error') && (g.classList.contains('consent') ? g.nextElementSibling : g.querySelector('.field-error')).remove();
+});
+
 contactForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
   formMsg('', '');
@@ -672,9 +697,18 @@ contactForm?.addEventListener('submit', async (e) => {
   const tel     = stripDangerous(document.getElementById('telefono')?.value.trim()||'');
   const serv    = document.getElementById('servicio')?.value||'';
 
-  if (!nombre || !email || !mensaje) return formMsg('err', 'Completa los campos obligatorios (*).');
-  if (!isValidEmail(email)) return formMsg('err', 'El correo no es válido.');
-  if (!document.getElementById('consent-contact')?.checked) return formMsg('err', 'Debes autorizar el tratamiento de datos para enviar el mensaje.');
+  clearFieldErrors();
+  const faltan = [];
+  if (!nombre)  faltan.push(fieldError('nombre', 'Escribe tu nombre'));
+  if (!email)   faltan.push(fieldError('email', 'Escribe tu correo'));
+  else if (!isValidEmail(email)) faltan.push(fieldError('email', 'El correo no es válido (ej: tu@correo.com)'));
+  if (!mensaje) faltan.push(fieldError('mensaje', 'Cuéntanos qué necesitas'));
+  if (!document.getElementById('consent-contact')?.checked) faltan.push(fieldError('consent-contact', 'Debes autorizar el tratamiento de datos'));
+  if (faltan.length) {
+    formMsg('err', 'Revisa los campos marcados en rojo para poder enviar el mensaje.');
+    faltan[0].focus();
+    return;
+  }
   const tk = takeToken('contact');
   if (!tk.ok) return formMsg('err', 'Estamos verificando que eres una persona. Intenta de nuevo en unos segundos.');
 
