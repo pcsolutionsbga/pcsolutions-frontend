@@ -62,6 +62,9 @@ document.addEventListener('error', (e) => {
 /* ═══ CARRITO ═══ */
 let cart = [];
 try { cart = JSON.parse(localStorage.getItem('pcs_cart') || '[]'); if (!Array.isArray(cart)) cart = []; } catch { cart = []; }
+// Descarta del carrito guardado cualquier ítem con datos inválidos o manipulados
+cart = cart.filter(i => i && Number.isInteger(Number(i.id)) && typeof i.nombre === 'string' && Number.isFinite(Number(i.precio)) && Number(i.precio) >= 0 && Number.isInteger(Number(i.qty)) && Number(i.qty) >= 1)
+           .map(i => ({ ...i, id: Number(i.id), precio: Number(i.precio), qty: Math.min(99, Number(i.qty)) }));
 let productosById = {};
 
 function saveCart() { try { localStorage.setItem('pcs_cart', JSON.stringify(cart)); } catch {} }
@@ -497,7 +500,7 @@ function applyConfig(cfg) {
   // Enlaces de WhatsApp, teléfono y correo
   document.querySelectorAll('[data-wa]').forEach(a => { a.href = waLink(a.dataset.waMsg || ''); });
   if (cfg.telefono) document.querySelectorAll('[data-tel]').forEach(a => { a.href = 'tel:+57' + cfg.telefono.replace(/\D/g, '').replace(/^57(?=\d{10}$)/, ''); });
-  if (cfg.email) document.querySelectorAll('[data-mail]').forEach(a => { a.href = 'mailto:' + cfg.email; });
+  if (cfg.email) document.querySelectorAll('[data-mail]').forEach(a => { a.href = 'mailto:' + encodeURIComponent(cfg.email).replace(/%40/g, '@'); });
 
   // Redes sociales: solo se muestran las que tienen enlace
   document.querySelectorAll('[data-social]').forEach(a => {

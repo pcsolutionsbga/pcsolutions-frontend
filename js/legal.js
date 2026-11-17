@@ -15,8 +15,9 @@ function formatPhone(v) {
 
 (async function () {
   const doc = new URLSearchParams(location.search).get('doc');
-  const def = DOCS[doc] || DOCS.privacidad;
-  const id = DOCS[doc] ? doc : 'privacidad';
+  const valido = Object.hasOwn(DOCS, doc || '');
+  const def = valido ? DOCS[doc] : DOCS.privacidad;
+  const id = valido ? doc : 'privacidad';
   document.getElementById('legal-title').textContent = def.title;
   document.title = def.title + ' — PC SOLUTIONS®';
   document.getElementById('tab-' + id).classList.add('active');
@@ -34,7 +35,7 @@ function formatPhone(v) {
       email: cfg.email || '',
       telefono: formatPhone(cfg.telefono)
     };
-    const text = String(cfg[def.key] || '').replace(/\{\{(\w+)\}\}/g, (m, k) => vars[k] ?? m);
+    const text = String(cfg[def.key] || '').replace(/\{\{(\w+)\}\}/g, (m, k) => (Object.hasOwn(vars, k) ? vars[k] : m));
     if (!text.trim()) { body.textContent = 'Este documento aún no está disponible. Escríbenos y con gusto te lo enviamos.'; return; }
 
     body.textContent = '';
