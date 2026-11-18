@@ -551,7 +551,7 @@ function applyConfig(cfg) {
   document.querySelectorAll('[data-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
 
   // Título de la pestaña y datos para Google (negocio local)
-  injectBusinessData(cfg);
+  // Los datos para Google ahora están fijos en index.html (ld-business)
 
   // Protección anti-spam
   loadTurnstile();
