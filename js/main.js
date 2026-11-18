@@ -374,6 +374,21 @@ document.getElementById('products-grid')?.addEventListener('keydown', (e) => {
 });
 
 /* ═══ SERVICIOS Y OPINIONES (API) ═══ */
+// Página propia de cada servicio (se busca por el nombre; si no coincide, se usa el destino de siempre)
+const SERVICIO_PAGINAS = {
+  'desarrollo a la medida': 'desarrollo-software-bucaramanga.html',
+  'soporte tecnico': 'soporte-tecnico-bucaramanga.html',
+  'venta de equipos': 'venta-computadores-bucaramanga.html',
+  'ensamble a la medida': 'ensamble-computadores-bucaramanga.html',
+  'configuracion y redes': 'redes-wifi-bucaramanga.html',
+  'seguridad informatica': 'seguridad-informatica-bucaramanga.html',
+  'repuestos y partes': 'repuestos-computadores-bucaramanga.html'
+};
+function paginaServicio(titulo) {
+  const k = String(titulo || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  return Object.hasOwn(SERVICIO_PAGINAS, k) ? SERVICIO_PAGINAS[k] : '';
+}
+
 async function loadServicios() {
   const grid = document.getElementById('services-grid');
   const footerList = document.getElementById('footer-services');
@@ -384,14 +399,15 @@ async function loadServicios() {
     if (grid) grid.innerHTML = items.map(s => {
       const ic = ICONOS.includes(s.icono) ? s.icono : 'wrench';
       const destino = s.destino === 'productos' ? '#productos' : s.destino === 'desarrollo' ? '#desarrollo' : '#contacto';
+      const pagina = paginaServicio(s.titulo);
       return `<div class="service-card glass reveal visible">
         <div class="service-icon">${icon(ic)}</div>
         <h3>${esc(s.titulo)}</h3>
         <p>${esc(s.descripcion)}</p>
-        <a href="${destino}" class="service-link">${esc(s.boton_texto || 'Solicitar')} →</a>
+        <a href="${pagina || destino}" class="service-link">${pagina ? 'Ver más' : esc(s.boton_texto || 'Solicitar')} →</a>
       </div>`;
     }).join('');
-    if (footerList) footerList.innerHTML = items.slice(0, 5).map(s => `<li><a href="#servicios">${esc(s.titulo)}</a></li>`).join('');
+    if (footerList) footerList.innerHTML = items.slice(0, 5).map(s => `<li><a href="${paginaServicio(s.titulo) || '#servicios'}">${esc(s.titulo)}</a></li>`).join('');
   } catch (e) {
     if (grid) grid.innerHTML = '<p class="section-sub">No pudimos cargar los servicios. Escríbenos por WhatsApp y con gusto te atendemos.</p>';
   }
