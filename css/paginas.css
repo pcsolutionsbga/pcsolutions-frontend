@@ -1,0 +1,27 @@
+/* Páginas de servicios (SEO) */
+.pg { padding-top: calc(var(--navbar-h) + 2rem); }
+.pg-hero { padding: 3rem 0 2rem; }
+.pg-intro { font-size: clamp(1.05rem, 1.8vw, 1.25rem); color: var(--muted); max-width: 720px; margin: 0 0 2rem; }
+.pg-actions { display: flex; gap: 14px; flex-wrap: wrap; margin: 0 0 1rem; }
+.pg-zonas { color: var(--dim); font-size: .95rem; margin-top: .5rem; }
+.pg-sec { padding: 2.5rem 0; }
+.pg-h2 { font-family: var(--font-h); font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -0.02em; color: #fff; margin-bottom: 1.5rem; }
+.pg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+.pg-card { padding: 1.5rem; }
+.pg-card h3, .pg-step h3 { font-family: var(--font-h); font-size: 1.1rem; color: #fff; margin-bottom: .5rem; }
+.pg-card p, .pg-step p, .pg-faq p { color: var(--muted); font-size: .98rem; }
+.pg-steps { list-style: none; display: grid; gap: 16px; padding: 0; }
+.pg-step { display: flex; gap: 1.2rem; align-items: flex-start; padding: 1.4rem; }
+.pg-num { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-m); font-weight: 600; color: #031b10; background: var(--g); }
+.pg-why { list-style: none; padding: 0; display: grid; gap: 12px; }
+.pg-why li { position: relative; padding-left: 1.8rem; color: var(--text); }
+.pg-why li::before { content: ''; position: absolute; left: 0; top: .55em; width: 9px; height: 9px; border-radius: 50%; background: var(--g); box-shadow: 0 0 12px var(--g); }
+.pg-narrow { max-width: 820px; }
+.pg-faq { padding: 1.1rem 1.4rem; margin-bottom: 12px; }
+.pg-faq summary { cursor: pointer; font-weight: 600; color: #fff; }
+.pg-faq p { margin-top: .7rem; }
+.pg-cta { padding: 2.5rem 1.5rem; text-align: center; }
+.pg-cta .pg-actions { justify-content: center; }
+.pg-cta p { color: var(--muted); margin-bottom: 1.5rem; }
+.pg-more { margin-top: 1.5rem; margin-bottom: .8rem !important; }
+@media (max-width: 600px) { .pg-step { flex-direction: column; } }
