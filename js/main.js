@@ -376,13 +376,13 @@ document.getElementById('products-grid')?.addEventListener('keydown', (e) => {
 /* ═══ SERVICIOS Y OPINIONES (API) ═══ */
 // Página propia de cada servicio (se busca por el nombre; si no coincide, se usa el destino de siempre)
 const SERVICIO_PAGINAS = {
-  'desarrollo a la medida': 'desarrollo-software-bucaramanga.html',
-  'soporte tecnico': 'soporte-tecnico-bucaramanga.html',
-  'venta de equipos': 'venta-computadores-bucaramanga.html',
-  'ensamble a la medida': 'ensamble-computadores-bucaramanga.html',
-  'configuracion y redes': 'redes-wifi-bucaramanga.html',
-  'seguridad informatica': 'seguridad-informatica-bucaramanga.html',
-  'repuestos y partes': 'repuestos-computadores-bucaramanga.html'
+  'desarrollo a la medida': '/desarrollo-software-bucaramanga',
+  'soporte tecnico': '/soporte-tecnico-bucaramanga',
+  'venta de equipos': '/venta-computadores-bucaramanga',
+  'ensamble a la medida': '/ensamble-computadores-bucaramanga',
+  'configuracion y redes': '/redes-wifi-bucaramanga',
+  'seguridad informatica': '/seguridad-informatica-bucaramanga',
+  'repuestos y partes': '/repuestos-computadores-bucaramanga'
 };
 function paginaServicio(titulo) {
   const k = String(titulo || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
